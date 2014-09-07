@@ -1,8 +1,10 @@
 package com.example.minimediaplayer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -10,24 +12,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
 	
 	Context context;
 	Intent playerIntent;
+	boolean play;
+	Button previousButton;
+	Button playButton;
+	Button stopButton;
+	Button nextButton;
+	TextView songName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        registerReceiver(serviceBroadcast, new IntentFilter("trackTitle"));
+        
         // Set Variables
         context = this;
+        play = true;
         playerIntent = new Intent(context, PlayerService.class);
+        previousButton = (Button)findViewById(R.id.previousBtn);
+        playButton = (Button)findViewById(R.id.playBtn);
+        stopButton = (Button)findViewById(R.id.stopBtn);
+        nextButton = (Button)findViewById(R.id.nextBtn);
+        songName = (TextView)findViewById(R.id.songTitle);
         
         // Set OnClickListeners for Audio Buttons
-        Button previousButton = (Button)findViewById(R.id.previousBtn);
         previousButton.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -36,10 +52,11 @@ public class MainActivity extends Activity {
 //				PlayerService service = new PlayerService("previous");
 //				Intent playerIntent = new Intent(context, PlayerService.class);
 				startService(playerIntent.setAction("ACTION_PREVIOUS"));
+				playButton.setBackgroundResource(R.drawable.ic_action_pause);
+				play = false;
 			}
         	
         });
-        final Button playButton = (Button)findViewById(R.id.playBtn);
         playButton.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -48,6 +65,14 @@ public class MainActivity extends Activity {
 				Log.i("MainActivity", "Play button clicked");
 //				Intent playerIntent = new Intent(context, PlayerService.class);
 				startService(playerIntent.setAction("ACTION_PLAY"));
+				if (play == true) {
+					playButton.setBackgroundResource(R.drawable.ic_action_pause);
+					play = false;
+				} else {
+					playButton.setBackgroundResource(R.drawable.ic_action_play);
+					play = true;
+				}
+				
 //				PlayerService serviceStr = new PlayerService();
 				
 /*				if(PlayerService.getStatus().matches("false")) {
@@ -61,7 +86,6 @@ public class MainActivity extends Activity {
 			}
         	
         });
-        Button stopButton = (Button)findViewById(R.id.stopBtn);
         stopButton.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -70,12 +94,12 @@ public class MainActivity extends Activity {
 //				Intent playerIntent = new Intent(context, PlayerService.class);
 //				PlayerService service = new PlayerService("stop");
 				Log.i("MainActivity", "Service Player stopped");
-				stopService(playerIntent);
+				playButton.setBackgroundResource(R.drawable.ic_action_play);
 //				startService(playerIntent.setAction("ACTION_PLAY"));
+				stopService(playerIntent);
 			}
         	
         });
-        Button nextButton = (Button)findViewById(R.id.nextBtn);
         nextButton.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -84,11 +108,22 @@ public class MainActivity extends Activity {
 //				PlayerService service = new PlayerService("next");
 //				Intent playerIntent = new Intent(context, PlayerService.class);
 				startService(playerIntent.setAction("ACTION_NEXT"));
+				playButton.setBackgroundResource(R.drawable.ic_action_pause);
+				play = false;
 			}
         	
         });
     }
-
+    
+    private BroadcastReceiver serviceBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context ctxt, Intent i) {
+            // do stuff to the UI
+        	Log.i("MainActivity", "Reciever was hit");
+        	String title = (String) i.getExtras().get("title");
+        	songName.setText(title);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
