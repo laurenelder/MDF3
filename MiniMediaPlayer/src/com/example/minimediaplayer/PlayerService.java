@@ -14,7 +14,12 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
+import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Button;
 
@@ -29,6 +34,9 @@ public class PlayerService extends Service{
 	int trackNum;
 	boolean isPrepared = false;;
 	ArrayList<String> resources;
+	public static final String MESSENGER_KEY = "messenger";
+	Intent thisIntent;
+//	BoundServiceBinder binder;
 
 	
 /*	public PlayerService(String callingBtn) {
@@ -56,6 +64,12 @@ public class PlayerService extends Service{
 		return started;
 	}*/
 	
+/*	public class BoundServiceBinder extends Binder {
+		public PlayerService getService() {
+			return PlayerService.this;
+		}
+	}*/
+	
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
@@ -69,12 +83,13 @@ public class PlayerService extends Service{
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
+//		binder = new BoundServiceBinder();
 		
 		state = "active";
 		Log.i("PlayerService", "Player Service created");
 		
 		resources = new ArrayList<String>();
-		String packageName = getPackageName();
+//		String packageName = getPackageName();
 		resources.add("android.resource://com.example.minimediaplayer/raw/lindsey_stirling0crystallize");
 		resources.add("android.resource://com.example.minimediaplayer/raw/lindsey_stirling0elements");
 		resources.add("android.resource://com.example.minimediaplayer/raw/lindsey_stirling0zelda_medley");
@@ -99,6 +114,21 @@ public class PlayerService extends Service{
 					String formattedTitle = unformattedTitle.substring(0, 1).toUpperCase() + 
 							unformattedTitle.substring(1);
 					Log.i("PlayerService", unformattedTitle.toString());
+					
+					Bundle extras = thisIntent.getExtras();
+					Messenger theMessenger = (Messenger)extras.get(MESSENGER_KEY);
+					Message message = Message.obtain(); 
+					message.arg1 = Activity.RESULT_OK; 
+					message.obj = formattedTitle; 
+					if (theMessenger != null) { 
+						try { 
+							theMessenger.send(message); 
+							} 
+						catch (RemoteException e) 
+						{ 
+							e.printStackTrace(); 
+						} 
+					}
 				}
 			}
 
@@ -150,6 +180,7 @@ public class PlayerService extends Service{
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// TODO Auto-generated method stub
 		String input = intent.getAction();
+		thisIntent = intent;
 		if(input.matches("ACTION_PLAY")) {
 			if (player.isPlaying()) {
 				Log.i("PlayerService", "Player Service paused");
@@ -264,12 +295,22 @@ public class PlayerService extends Service{
 		
 		return Service.START_NOT_STICKY;
 	}
+	
+/*	@Override
+	public boolean onUnbind(Intent intent) {
+//		Toast.makeText(this, "Service Unbound", Toast.LENGTH_SHORT).show();
+		return super.onUnbind(intent);
+	}*/
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+/*	public void showText(String text) {
+//		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+	}*/
 
 //	Button playButton = (Button)this.currentActivity.findViewById(R.id.playBtn);
 }
