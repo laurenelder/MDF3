@@ -1,15 +1,17 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/07/2014
+ * Term: 1409
+ * Project Name: Mini Media Player
+ * Assignment: MDF3 Week 1
+ */
+
 package com.example.minimediaplayer;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
+	// Establish Variables
 	Context context;
 	Intent playerIntent;
 	boolean play;
@@ -40,7 +43,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         
-        // Set Variables
+        // Initialize Variables
         context = this;
         play = true;
         playerIntent = new Intent(context, PlayerService.class);
@@ -49,6 +52,7 @@ public class MainActivity extends Activity {
         stopButton = (Button)findViewById(R.id.stopBtn);
         nextButton = (Button)findViewById(R.id.nextBtn);
         songName = (TextView)findViewById(R.id.songTitle);
+        serviceHandler(playerIntent.setAction("ACTION_INFO"));
 
         
         // Set OnClickListeners for Audio Buttons
@@ -56,10 +60,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-//				PlayerService service = new PlayerService("previous");
-//				Intent playerIntent = new Intent(context, PlayerService.class);
-//				startService(playerIntent.setAction("ACTION_PREVIOUS"));
+				// Call Handler Method to play previous track
 				serviceHandler(playerIntent.setAction("ACTION_PREVIOUS"));
 				playButton.setBackgroundResource(R.drawable.ic_action_pause);
 				play = false;
@@ -70,10 +71,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Log.i("MainActivity", "Play button clicked");
-//				Intent playerIntent = new Intent(context, PlayerService.class);
-//				startService(playerIntent.setAction("ACTION_PLAY"));
+				/* Call Handler Method to play/pause track. Conditional 
+				 * changes button image based on whether or not media is playing.
+				 */
+//				Log.i("MainActivity", "Play button clicked");
 				serviceHandler(playerIntent.setAction("ACTION_PLAY"));
 //				bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
 				if (play == true) {
@@ -83,17 +84,6 @@ public class MainActivity extends Activity {
 					playButton.setBackgroundResource(R.drawable.ic_action_play);
 					play = true;
 				}
-				
-//				PlayerService serviceStr = new PlayerService();
-				
-/*				if(PlayerService.getStatus().matches("false")) {
-					startService(playerIntent);
-					PlayerService service = new PlayerService("play");
-					playButton.setBackgroundResource(R.drawable.ic_action_pause);
-				} else {
-					PlayerService service = new PlayerService("pause");
-					playButton.setBackgroundResource(R.drawable.ic_action_play);
-				}*/
 			}
 
 /*			private void bindService(Intent playerIntent,
@@ -107,12 +97,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-//				Intent playerIntent = new Intent(context, PlayerService.class);
-//				PlayerService service = new PlayerService("stop");
+				// Call stopService to stop and release media player service.
+
 				Log.i("MainActivity", "Service Player stopped");
 				playButton.setBackgroundResource(R.drawable.ic_action_play);
-//				startService(playerIntent.setAction("ACTION_PLAY"));
 				stopService(playerIntent);
 			}
         	
@@ -121,10 +109,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-//				PlayerService service = new PlayerService("next");
-//				Intent playerIntent = new Intent(context, PlayerService.class);
-//				startService(playerIntent.setAction("ACTION_NEXT"));
+				// Call Handler Method to play next track.
 				serviceHandler(playerIntent.setAction("ACTION_NEXT"));
 				playButton.setBackgroundResource(R.drawable.ic_action_pause);
 				play = false;
@@ -180,6 +165,9 @@ public class MainActivity extends Activity {
 		isBound = false;
 	}*/
     
+    /* serviceHandler method allows communication from the player service
+     * to the activity. The UI is updated from the data passed.
+     */
     public void serviceHandler(Intent serviceIntent) {
     	
     	Handler handler = new Handler() { 
@@ -188,12 +176,13 @@ public class MainActivity extends Activity {
     			if (msg.arg1 == RESULT_OK && msg.obj != null) { 
     				//do stuff here } } };
     				songName.setText(msg.obj.toString());
+    				playButton.setBackgroundResource(R.drawable.ic_action_pause);
+    				play = false;
     			}
     		}
     	};
 
     	Messenger messenger = new Messenger(handler); 
-//    	Intent intent = new Intent(this, LaunchIntentService.class); 
     	serviceIntent.putExtra(PlayerService.MESSENGER_KEY, messenger); 
     	startService(serviceIntent);
     }	

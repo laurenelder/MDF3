@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Name: Devin "Lauren" Elder -->
+<!-- Date: 09/07/2014 -->
+<!-- Term: 1409 -->
+<!-- Project Name: Mini Media Player -->
+<!-- Assignment: MDF3 Week 1 -->
+
 <resources>
 
     <string name="app_name">Mini Media Player</string>
