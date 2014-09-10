@@ -1,0 +1,47 @@
+package com.example.minimediaplayer;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainFragment extends Fragment{
+	
+	// Establish Variables
+	Context context;
+	Button previousButton;
+	Button repeatButton;
+	Button playButton;
+	Button stopButton;
+	Button nextButton;
+	TextView songName;
+
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		
+		View view = inflater.inflate(R.layout.activity_main, container);
+		
+        previousButton = (Button)view.findViewById(R.id.previousBtn);
+        repeatButton = (Button)view.findViewById(R.id.repeatBtn);
+        playButton = (Button)view.findViewById(R.id.playBtn);
+        stopButton = (Button)view.findViewById(R.id.stopBtn);
+        nextButton = (Button)view.findViewById(R.id.nextBtn);
+        songName = (TextView)view.findViewById(R.id.songTitle);
+		
+		return view;
+	}
+
+}
