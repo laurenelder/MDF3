@@ -22,14 +22,17 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int ic_action_next=0x7f020000;
-        public static final int ic_action_pause=0x7f020001;
-        public static final int ic_action_play=0x7f020002;
-        public static final int ic_action_previous=0x7f020003;
-        public static final int ic_action_repeat=0x7f020004;
-        public static final int ic_action_stop=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int ic_notification=0x7f020007;
+        public static final int crystallize=0x7f020000;
+        public static final int elements=0x7f020001;
+        public static final int ic_action_next=0x7f020002;
+        public static final int ic_action_pause=0x7f020003;
+        public static final int ic_action_play=0x7f020004;
+        public static final int ic_action_previous=0x7f020005;
+        public static final int ic_action_repeat=0x7f020006;
+        public static final int ic_action_stop=0x7f020007;
+        public static final int ic_launcher=0x7f020008;
+        public static final int ic_notification=0x7f020009;
+        public static final int zeldamedley=0x7f02000a;
     }
     public static final class id {
         public static final int action_settings=0x7f09000a;

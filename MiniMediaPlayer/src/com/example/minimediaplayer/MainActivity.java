@@ -7,6 +7,8 @@
 
 package com.example.minimediaplayer;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -238,7 +240,8 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
 //    				playButton.setBackgroundResource(R.drawable.ic_action_pause);
 //    				play = false;
     				if (fragment != null) {
-    					((MainFragment) fragment).updateUI(false, msg.obj.toString());
+    					ArrayList data = (ArrayList) msg.obj;
+    					((MainFragment) fragment).updateUI(data);
     				}
     			}
     		}

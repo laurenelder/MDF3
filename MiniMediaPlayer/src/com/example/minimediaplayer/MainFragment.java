@@ -1,5 +1,7 @@
 package com.example.minimediaplayer;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainFragment extends Fragment{
@@ -24,6 +27,7 @@ public class MainFragment extends Fragment{
 	Button stopButton;
 	Button nextButton;
 	TextView songName;
+	ImageView image;
 	private onSelectedButton parentActivity;
 	
 	public interface onSelectedButton {
@@ -62,6 +66,7 @@ public class MainFragment extends Fragment{
         stopButton = (Button)view.findViewById(R.id.stopBtn);
         nextButton = (Button)view.findViewById(R.id.nextBtn);
         songName = (TextView)view.findViewById(R.id.songTitle);
+        image = (ImageView)view.findViewById(R.id.thumbnailImage);
         
         // Set OnClickListeners for Audio Buttons
         previousButton.setOnClickListener(new OnClickListener(){
@@ -70,7 +75,7 @@ public class MainFragment extends Fragment{
 			public void onClick(View v) {
 				// Call Handler Method to play previous track
 				parentActivity.buttonClick("previous");
-				playButton.setBackgroundResource(R.drawable.ic_action_pause);
+//				playButton.setBackgroundResource(R.drawable.ic_action_pause);
 				play = false;
 			}
         	
@@ -96,10 +101,10 @@ public class MainFragment extends Fragment{
 				parentActivity.buttonClick("play");
 //				bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
 				if (play == true) {
-					playButton.setBackgroundResource(R.drawable.ic_action_pause);
+//					playButton.setBackgroundResource(R.drawable.ic_action_pause);
 					play = false;
 				} else {
-					playButton.setBackgroundResource(R.drawable.ic_action_play);
+//					playButton.setBackgroundResource(R.drawable.ic_action_play);
 					play = true;
 				}
 			}
@@ -129,7 +134,7 @@ public class MainFragment extends Fragment{
 			public void onClick(View v) {
 				// Call Handler Method to play next track.
 				parentActivity.buttonClick("next");
-				playButton.setBackgroundResource(R.drawable.ic_action_pause);
+//				playButton.setBackgroundResource(R.drawable.ic_action_pause);
 				play = false;
 			}
         	
@@ -138,13 +143,27 @@ public class MainFragment extends Fragment{
 		return view;
 	}
 	
-	public void updateUI(boolean pBtnStatus, String songTitle) {
-		if (!pBtnStatus) {
-			play = false;
-			playButton.setBackgroundResource(R.drawable.ic_action_pause);
+	public void updateUI(ArrayList data) {
+//		ArrayList<String> data = (ArrayList)
+		songName.setText(data.get(0).toString());
+		if (data.get(1).toString().matches("crystallize")) {
+			image.setImageResource(R.drawable.crystallize);
 		}
-		if (songTitle != null) {
-			songName.setText(songTitle.toString());
+		if (data.get(1).toString().matches("elements")) {
+			image.setImageResource(R.drawable.elements);
+		}
+		if (data.get(1).toString().matches("zeldamedley")) {
+			image.setImageResource(R.drawable.zeldamedley);
+		}
+		if (data.get(2).toString().matches("repeating")) {
+			repeatButton.setAlpha((float) 0.5);
+		} else {
+			repeatButton.setAlpha(1);
+		}
+		if (data.get(3).toString().matches("playing")) {
+			playButton.setBackgroundResource(R.drawable.ic_action_pause);
+		} else {
+			playButton.setBackgroundResource(R.drawable.ic_action_play);
 		}
 	}
 }

@@ -17,6 +17,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -41,6 +42,7 @@ public class PlayerService extends Service{
 	int trackNum;
 	boolean isPrepared = false;;
 	ArrayList<String> resources;
+	ArrayList<String> imageResources;
 	public static final String MESSENGER_KEY = "messenger";
 	Intent thisIntent;
 //	BoundServiceBinder binder;
@@ -62,7 +64,8 @@ public class PlayerService extends Service{
 	
 	BoundServiceBinder binder;
 	
-	public void MediaService(Intent intent) {
+/*	public void MediaService(Intent intent) {
+		
 		extras = thisIntent.getExtras();
 		theMessenger = (Messenger)extras.get(MESSENGER_KEY);
 		message = Message.obtain(); 
@@ -78,7 +81,7 @@ public class PlayerService extends Service{
 				e.printStackTrace(); 
 			} 
 		}
-	}
+	}*/
 	
 	/* Called when the user selects the stop button.
 	 * This method stops and releases the media player service.
@@ -86,6 +89,7 @@ public class PlayerService extends Service{
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
+//		sendData();
 		notifyMgr.cancelAll();
 		player.stop();
 		player.reset();
@@ -109,8 +113,8 @@ public class PlayerService extends Service{
 		notifyMgr = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		notifyBuilder = new NotificationCompat.Builder(this);
 		notifyBuilder.setSmallIcon(R.drawable.ic_notification);
-		notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
-			getResources(), R.drawable.ic_launcher));
+/*		notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
+			getResources(), R.drawable.ic_launcher));*/
 		Intent notificationIntent = new Intent(this, MainActivity.class);
 		PendingIntent clickIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		notifyBuilder.setContentIntent(clickIntent);
@@ -123,6 +127,12 @@ public class PlayerService extends Service{
 		resources.add("android.resource://com.example.minimediaplayer/raw/lindsey_stirling0crystallize");
 		resources.add("android.resource://com.example.minimediaplayer/raw/lindsey_stirling0elements");
 		resources.add("android.resource://com.example.minimediaplayer/raw/lindsey_stirling0zelda_medley");
+		
+		imageResources = new ArrayList<String>();
+		imageResources.add("crystallize");
+		imageResources.add("elements");
+		imageResources.add("zeldamedley");
+		
 		
 		// Create media player
 		if(player == null) {
@@ -150,6 +160,29 @@ public class PlayerService extends Service{
 					Log.i("PlayerService", unformattedTitle.toString());
 					
 					// Finalize and start notification
+					Bitmap regularImage = null;
+					Bitmap resizedImage = null;
+					if (imageResources.get(trackNum).toString().matches("crystallize")) {
+						regularImage = BitmapFactory.decodeResource(
+								getResources(), R.drawable.crystallize);
+//						resizedImage = Bitmap.createScaledBitmap(regularImage, 200, 200, true);
+/*						notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
+								getResources(), R.drawable.crystallize));*/
+					}
+					if (imageResources.get(trackNum).toString().matches("elements")) {
+						regularImage = BitmapFactory.decodeResource(
+								getResources(), R.drawable.elements);
+/*						notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
+								getResources(), R.drawable.elements));*/
+					}
+					if (imageResources.get(trackNum).toString().matches("zeldamedley")) {
+						regularImage = BitmapFactory.decodeResource(
+								getResources(), R.drawable.zeldamedley);
+/*						notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
+								getResources(), R.drawable.zeldamedley));*/
+					}
+					resizedImage = Bitmap.createScaledBitmap(regularImage, 200, 200, true);
+					notifyBuilder.setLargeIcon(resizedImage);
 					notifyBuilder.setContentTitle("Playing Music");
 					notifyBuilder.setContentText(formattedTitle.toString());
 					notification = notifyBuilder.build();
@@ -158,21 +191,8 @@ public class PlayerService extends Service{
 					/* Set up service side handler to allow sending the track name
 					 * to MainActivity for display in UI
 					 */
-					extras = thisIntent.getExtras();
-					theMessenger = (Messenger)extras.get(MESSENGER_KEY);
-					message = Message.obtain(); 
-					message.arg1 = Activity.RESULT_OK; 
-					message.arg2 = 0;
-					message.obj = formattedTitle; 
-					if (theMessenger != null) { 
-						try { 
-							theMessenger.send(message); 
-							} 
-						catch (RemoteException e) 
-						{ 
-							e.printStackTrace(); 
-						} 
-					}
+					
+					sendData();
 				}
 			}
 
@@ -186,6 +206,10 @@ public class PlayerService extends Service{
 				// Add auto skip functionality when previous track is over
 				player.stop();
 				player.reset();
+				
+				if(isRepeating) {
+					player.setLooping(true);
+				}
 				
 				if(!player.isLooping()) {
 					trackNum++;
@@ -258,22 +282,8 @@ public class PlayerService extends Service{
 			}
 		}*/
 		
-		if(player.isPlaying()) {
-			extras = thisIntent.getExtras();
-			theMessenger = (Messenger)extras.get(MESSENGER_KEY);
-			message = Message.obtain(); 
-			message.arg1 = Activity.RESULT_OK; 
-			message.arg2 = 0;
-			message.obj = formattedTitle; 
-			if (theMessenger != null) { 
-				try { 
-					theMessenger.send(message); 
-					} 
-				catch (RemoteException e) 
-				{ 
-					e.printStackTrace(); 
-				} 
-			}
+		if (player.isPlaying()) {
+			sendData();
 		}
 		
 		/* This conditional is hit when the user selects the play button.
@@ -402,6 +412,38 @@ public class PlayerService extends Service{
 		return binder;
 	}
 	
+	public void sendData() {
+		ArrayList<String> uiData = new ArrayList<String>();
+		uiData.add(formattedTitle);
+		uiData.add(imageResources.get(trackNum));
+		if (player.isLooping()) {
+			uiData.add("repeating");
+		} else {
+			uiData.add("notrepeating");
+		}
+		if (player.isPlaying()) {
+			uiData.add("playing");
+		} else {
+			uiData.add("notplaying");
+		}
+		
+		extras = thisIntent.getExtras();
+		theMessenger = (Messenger)extras.get(MESSENGER_KEY);
+		message = Message.obtain(); 
+		message.arg1 = Activity.RESULT_OK; 
+		message.arg2 = 1;
+		message.obj = uiData; 
+		if (theMessenger != null) { 
+			try { 
+				theMessenger.send(message); 
+				} 
+			catch (RemoteException e) 
+			{ 
+				e.printStackTrace(); 
+			} 
+		}
+	}
+	
 	public void buttonAction(String action) {
 		Log.i("PlayerService", "buttonAction method called");
 		Log.i("PlayerService", action.toString());
@@ -458,6 +500,7 @@ public class PlayerService extends Service{
 					isRepeating = false;
 					Log.i("PlayerService", "Looping is no longer active!");
 				}
+				sendData();
 			}
 		}
 		if (action.matches("play")) {
@@ -465,17 +508,14 @@ public class PlayerService extends Service{
 				Log.i("PlayerService", "Player Service paused");
 				newState = "paused";
 				player.pause();
+				sendData();
 			}
 			if(state.matches("paused")) {
 				newState = "playing";
 				player.start();
+				sendData();
 			} 
 			if (!isPrepared){
-				
-				if(isRepeating) {
-					player.setLooping(true);
-				}
-				
 				Log.i("PlayerService", "Player Service playing");
 				newState = "playing";
 				trackNum = 0;
@@ -498,6 +538,8 @@ public class PlayerService extends Service{
 					}
 				}
 			state = newState;
+
+			
 		}
 		if (action.matches("next")) {
 			Log.i("PlayerService", "Player Service next track");
@@ -540,21 +582,7 @@ public class PlayerService extends Service{
 			}
 		}
 		if (action.matches("info") && player.isPlaying()) {
-			extras = thisIntent.getExtras();
-			theMessenger = (Messenger)extras.get(MESSENGER_KEY);
-			message = Message.obtain(); 
-			message.arg1 = Activity.RESULT_OK; 
-			message.arg2 = 1;
-			message.obj = formattedTitle; 
-			if (theMessenger != null) { 
-				try { 
-					theMessenger.send(message); 
-					} 
-				catch (RemoteException e) 
-				{ 
-					e.printStackTrace(); 
-				} 
-			}
+			sendData();
 		}
 	}
 }
