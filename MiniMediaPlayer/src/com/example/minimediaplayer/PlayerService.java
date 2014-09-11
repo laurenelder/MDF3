@@ -52,6 +52,7 @@ public class PlayerService extends Service{
 	Messenger theMessenger;
 	Message message;
 	Notification notification;
+	boolean isRepeating = false;
 	
 	public class BoundServiceBinder extends Binder {
 		public PlayerService getService() {
@@ -185,7 +186,11 @@ public class PlayerService extends Service{
 				// Add auto skip functionality when previous track is over
 				player.stop();
 				player.reset();
-				trackNum++;
+				
+				if(!player.isLooping()) {
+					trackNum++;
+				}
+				
 				if (trackNum < (resources.size() - 1)) {
 					try {
 						player.setDataSource(PlayerService.this, Uri.parse(resources.get(trackNum)));
@@ -253,6 +258,24 @@ public class PlayerService extends Service{
 			}
 		}*/
 		
+		if(player.isPlaying()) {
+			extras = thisIntent.getExtras();
+			theMessenger = (Messenger)extras.get(MESSENGER_KEY);
+			message = Message.obtain(); 
+			message.arg1 = Activity.RESULT_OK; 
+			message.arg2 = 0;
+			message.obj = formattedTitle; 
+			if (theMessenger != null) { 
+				try { 
+					theMessenger.send(message); 
+					} 
+				catch (RemoteException e) 
+				{ 
+					e.printStackTrace(); 
+				} 
+			}
+		}
+		
 		/* This conditional is hit when the user selects the play button.
 		 * If the media is not playing the default track is loaded and prepared.
 		 * If the media is already playing then the media play back is paused till
@@ -268,7 +291,7 @@ public class PlayerService extends Service{
 				newState = "playing";
 				player.start();
 			} */
-			if (!isPrepared){
+/*			if (!isPrepared){
 				Log.i("PlayerService", "Player Service playing");
 				newState = "playing";
 				trackNum = 0;
@@ -291,7 +314,7 @@ public class PlayerService extends Service{
 					}
 				}
 			state = newState;
-//		}
+//		}*/
 
 		/* This conditional is hit when the user selects the previous
 		 * button. The previous track is loaded and prepared.
@@ -385,10 +408,18 @@ public class PlayerService extends Service{
 		if (action.matches("previous")) {
 			Log.i("PlayerService", "Player Service previous track");
 			if (trackNum > 0) {
-				trackNum = trackNum - 1;
+				if (!player.isLooping()) {
+					trackNum = trackNum - 1;
+				}
+				
 			}
+			
 			player.stop();
 			player.reset();
+			
+			if(isRepeating) {
+				player.setLooping(true);
+			}
 			
 			try {
 				player.setDataSource(PlayerService.this, Uri.parse(resources.get(trackNum)));
@@ -420,9 +451,11 @@ public class PlayerService extends Service{
 				
 				if (!player.isLooping()) {
 					player.setLooping(true);
+					isRepeating = true;
 					Log.i("PlayerService", "Looping is now active!");
 				} else {
 					player.setLooping(false);
+					isRepeating = false;
 					Log.i("PlayerService", "Looping is no longer active!");
 				}
 			}
@@ -437,7 +470,12 @@ public class PlayerService extends Service{
 				newState = "playing";
 				player.start();
 			} 
-/*			if (!isPrepared){
+			if (!isPrepared){
+				
+				if(isRepeating) {
+					player.setLooping(true);
+				}
+				
 				Log.i("PlayerService", "Player Service playing");
 				newState = "playing";
 				trackNum = 0;
@@ -458,16 +496,23 @@ public class PlayerService extends Service{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}*/
+				}
 			state = newState;
 		}
 		if (action.matches("next")) {
 			Log.i("PlayerService", "Player Service next track");
 			if (trackNum < (resources.size() - 1)) {
-				trackNum = trackNum + 1;
+				if (!player.isLooping()) {
+					trackNum = trackNum + 1;
+				}
+				
 			}
 			player.stop();
 			player.reset();
+			
+			if(isRepeating) {
+				player.setLooping(true);
+			}
 			
 			try {
 				player.setDataSource(PlayerService.this, Uri.parse(resources.get(trackNum)));

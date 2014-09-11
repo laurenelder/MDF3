@@ -62,6 +62,14 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
 //        serviceHandler("ACTION_INFO");
 //        serviceHandler();
         
+		if (!boundToService) {
+			serviceHandler();
+   			startService(playerIntent);
+			bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
+		} else {
+			playerService.buttonAction("info");
+		}
+        
         // Set FragmentManager to allow calling methods in MainFragment
         fragMgr = getFragmentManager();
 		fragment = (MainFragment)fragMgr.findFragmentById(R.id.frag);
@@ -244,7 +252,8 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
     public void buttonClick(String selectedButton) {
     	if (selectedButton.matches("previous")) {
     		if (!boundToService) {
-    			startService(playerIntent);
+    			serviceHandler();
+//    			startService(playerIntent);
     			bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
     		} else {
     			playerService.buttonAction("previous");
@@ -252,7 +261,8 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
     	}
     	if (selectedButton.matches("repeat")) {
     		if (!boundToService) {
-    			startService(playerIntent);
+    			serviceHandler();
+//    			startService(playerIntent);
     			bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
     		} else {
     			playerService.buttonAction("repeat");
@@ -260,7 +270,8 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
     	}
     	if (selectedButton.matches("play")) {
     		if (!boundToService) {
-    			startService(playerIntent);
+    			serviceHandler();
+ //   			startService(playerIntent);
     			bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
     		} else {
     			playerService.buttonAction("play");
@@ -276,7 +287,8 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
     	}
     	if (selectedButton.matches("next")) {
     		if (!boundToService) {
-    			startService(playerIntent);
+    			serviceHandler();
+ //   			startService(playerIntent);
     			bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
     		} else {
     			playerService.buttonAction("next");
@@ -284,7 +296,7 @@ public class MainActivity extends Activity implements MainFragment.onSelectedBut
     	}
     	if (selectedButton.matches("info")) {
     		if (!boundToService) {
-    			startService(playerIntent);
+//    			startService(playerIntent);
     			bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
     		} else {
     			playerService.buttonAction("info");

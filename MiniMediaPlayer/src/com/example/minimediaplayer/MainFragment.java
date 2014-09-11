@@ -81,6 +81,7 @@ public class MainFragment extends Fragment{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 //				playerHandler("repeat");
+				parentActivity.buttonClick("repeat");
 			}
         
         });
