@@ -1,8 +1,8 @@
 /* Name: Devin "Lauren" Elder
- * Date: 09/07/2014
+ * Date: 09/11/2014
  * Term: 1409
  * Project Name: Mini Media Player
- * Assignment: MDF3 Week 1
+ * Assignment: MDF3 Week 2
  */
 
 package com.example.minimediaplayer;
@@ -45,7 +45,6 @@ public class PlayerService extends Service{
 	ArrayList<String> imageResources;
 	public static final String MESSENGER_KEY = "messenger";
 	Intent thisIntent;
-//	BoundServiceBinder binder;
 	public static final int STANDARD_NOTIFICATION = 0x01001;
 	NotificationManager notifyMgr;
 	NotificationCompat.Builder notifyBuilder;
@@ -56,6 +55,7 @@ public class PlayerService extends Service{
 	Notification notification;
 	boolean isRepeating = false;
 	
+	// Binder Class to pass data between activity and service
 	public class BoundServiceBinder extends Binder {
 		public PlayerService getService() {
 			return PlayerService.this;
@@ -63,25 +63,6 @@ public class PlayerService extends Service{
 	}
 	
 	BoundServiceBinder binder;
-	
-/*	public void MediaService(Intent intent) {
-		
-		extras = thisIntent.getExtras();
-		theMessenger = (Messenger)extras.get(MESSENGER_KEY);
-		message = Message.obtain(); 
-		message.arg1 = Activity.RESULT_OK; 
-		message.arg2 = 1;
-		message.obj = formattedTitle; 
-		if (theMessenger != null) { 
-			try { 
-				theMessenger.send(message); 
-				} 
-			catch (RemoteException e) 
-			{ 
-				e.printStackTrace(); 
-			} 
-		}
-	}*/
 	
 	/* Called when the user selects the stop button.
 	 * This method stops and releases the media player service.
@@ -106,15 +87,14 @@ public class PlayerService extends Service{
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
-//		binder = new BoundServiceBinder();
+		
+		// Set new binder
 		binder = new BoundServiceBinder();
 		
 		// Set up notification
 		notifyMgr = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		notifyBuilder = new NotificationCompat.Builder(this);
 		notifyBuilder.setSmallIcon(R.drawable.ic_notification);
-/*		notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
-			getResources(), R.drawable.ic_launcher));*/
 		Intent notificationIntent = new Intent(this, MainActivity.class);
 		PendingIntent clickIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		notifyBuilder.setContentIntent(clickIntent);
@@ -154,7 +134,6 @@ public class PlayerService extends Service{
 					String unformattedTitle = resources.get(trackNum)
 							.substring(resources.get(trackNum).lastIndexOf("0") + 1);
 					unformattedTitle = unformattedTitle.replace("_", " ");
-//					unformattedTitle = unformattedTitle.replace("0", " - ");
 					formattedTitle = unformattedTitle.substring(0, 1).toUpperCase() + 
 							unformattedTitle.substring(1);
 					Log.i("PlayerService", unformattedTitle.toString());
@@ -165,21 +144,14 @@ public class PlayerService extends Service{
 					if (imageResources.get(trackNum).toString().matches("crystallize")) {
 						regularImage = BitmapFactory.decodeResource(
 								getResources(), R.drawable.crystallize);
-//						resizedImage = Bitmap.createScaledBitmap(regularImage, 200, 200, true);
-/*						notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
-								getResources(), R.drawable.crystallize));*/
 					}
 					if (imageResources.get(trackNum).toString().matches("elements")) {
 						regularImage = BitmapFactory.decodeResource(
 								getResources(), R.drawable.elements);
-/*						notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
-								getResources(), R.drawable.elements));*/
 					}
 					if (imageResources.get(trackNum).toString().matches("zeldamedley")) {
 						regularImage = BitmapFactory.decodeResource(
 								getResources(), R.drawable.zeldamedley);
-/*						notifyBuilder.setLargeIcon(BitmapFactory.decodeResource(
-								getResources(), R.drawable.zeldamedley));*/
 					}
 					resizedImage = Bitmap.createScaledBitmap(regularImage, 200, 200, true);
 					notifyBuilder.setLargeIcon(resizedImage);
@@ -192,7 +164,7 @@ public class PlayerService extends Service{
 					 * to MainActivity for display in UI
 					 */
 					
-					sendData();
+					sendData(true);
 				}
 			}
 
@@ -260,145 +232,9 @@ public class PlayerService extends Service{
 		String input = intent.getAction();
 		thisIntent = intent;
 		
-		/* This conditional is hit when the application is loaded 
-		 * from the notification bar. The track information is then
-		 * sent back to the MainActivity to update the UI.
-		 */
-/*		if (input.matches("ACTION_INFO") && player.isPlaying()) {
-			extras = thisIntent.getExtras();
-			theMessenger = (Messenger)extras.get(MESSENGER_KEY);
-			message = Message.obtain(); 
-			message.arg1 = Activity.RESULT_OK; 
-			message.arg2 = 1;
-			message.obj = formattedTitle; 
-			if (theMessenger != null) { 
-				try { 
-					theMessenger.send(message); 
-					} 
-				catch (RemoteException e) 
-				{ 
-					e.printStackTrace(); 
-				} 
-			}
-		}*/
-		
 		if (player.isPlaying()) {
-			sendData();
+			sendData(false);
 		}
-		
-		/* This conditional is hit when the user selects the play button.
-		 * If the media is not playing the default track is loaded and prepared.
-		 * If the media is already playing then the media play back is paused till
-		 * the user selects the play button again.
-		 */
-/*		if(input.matches("ACTION_PLAY")) {
-			if (player.isPlaying()) {
-				Log.i("PlayerService", "Player Service paused");
-				newState = "paused";
-				player.pause();
-			}
-			if(state.matches("paused")) {
-				newState = "playing";
-				player.start();
-			} */
-/*			if (!isPrepared){
-				Log.i("PlayerService", "Player Service playing");
-				newState = "playing";
-				trackNum = 0;
-					try {
-						player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-						player.setDataSource(this, Uri.parse(resources.get(trackNum)));
-						player.prepare();
-					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalStateException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			state = newState;
-//		}*/
-
-		/* This conditional is hit when the user selects the previous
-		 * button. The previous track is loaded and prepared.
-		 */
-/*		if(input.matches("ACTION_PREVIOUS")) {
-			Log.i("PlayerService", "Player Service previous track");
-			if (trackNum > 0) {
-				trackNum = trackNum - 1;
-			}
-			player.stop();
-			player.reset();
-			
-			try {
-				player.setDataSource(PlayerService.this, Uri.parse(resources.get(trackNum)));
-			} catch (IllegalArgumentException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IllegalStateException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				player.prepare();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
-		
-		/* This conditional is hit when the user selects the next
-		 * button. The next track is loaded and prepared.
-		 */
-/*		if(input.matches("ACTION_NEXT")) {
-			Log.i("PlayerService", "Player Service next track");
-			if (trackNum < (resources.size() - 1)) {
-				trackNum = trackNum + 1;
-			}
-			player.stop();
-			player.reset();
-			
-			try {
-				player.setDataSource(PlayerService.this, Uri.parse(resources.get(trackNum)));
-			} catch (IllegalArgumentException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IllegalStateException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				player.prepare();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
 		return Service.START_STICKY;
 	}
 	
@@ -412,26 +248,61 @@ public class PlayerService extends Service{
 		return binder;
 	}
 	
-	public void sendData() {
+	/* This method returns data through the service handler back to the 
+	 * main activity.
+	 */
+	public void sendData(boolean nextTrack) {
 		ArrayList<String> uiData = new ArrayList<String>();
+		
+		// Add Song Name and Image
 		uiData.add(formattedTitle);
 		uiData.add(imageResources.get(trackNum));
+		
+		// Add Repeating State
 		if (player.isLooping()) {
 			uiData.add("repeating");
 		} else {
 			uiData.add("notrepeating");
 		}
+		
+		// Add Playing State
 		if (player.isPlaying()) {
 			uiData.add("playing");
 		} else {
 			uiData.add("notplaying");
 		}
 		
+		// Add Max Duration
+		if (player.isPlaying()) {
+			Integer durationNum = (Integer)player.getDuration();
+			String durationStr = durationNum.toString();
+			uiData.add(durationStr);
+			Log.i("PlayerService", durationStr);
+		} else {
+			uiData.add("none");
+		}
+		
+		// Add Progress State
+		if (player.isPlaying()) {
+			Integer progressStateNum = player.getCurrentPosition();
+			String progressStateStr = progressStateNum.toString();
+			uiData.add(progressStateStr);
+			Log.i("PlayerService", progressStateStr);
+		} else {
+			uiData.add("none");
+		}
+		
+		// If playing through tracks sends true
+		if (nextTrack == true) {
+			uiData.add("true");
+		} else {
+			uiData.add("false");
+		}
+		
 		extras = thisIntent.getExtras();
 		theMessenger = (Messenger)extras.get(MESSENGER_KEY);
 		message = Message.obtain(); 
 		message.arg1 = Activity.RESULT_OK; 
-		message.arg2 = 1;
 		message.obj = uiData; 
 		if (theMessenger != null) { 
 			try { 
@@ -444,6 +315,9 @@ public class PlayerService extends Service{
 		}
 	}
 	
+	/* The buttonAction method is called though the binder on button
+	 * clicks to control the service.
+	 */
 	public void buttonAction(String action) {
 		Log.i("PlayerService", "buttonAction method called");
 		Log.i("PlayerService", action.toString());
@@ -500,7 +374,7 @@ public class PlayerService extends Service{
 					isRepeating = false;
 					Log.i("PlayerService", "Looping is no longer active!");
 				}
-				sendData();
+				sendData(false);
 			}
 		}
 		if (action.matches("play")) {
@@ -508,12 +382,12 @@ public class PlayerService extends Service{
 				Log.i("PlayerService", "Player Service paused");
 				newState = "paused";
 				player.pause();
-				sendData();
+				sendData(false);
 			}
 			if(state.matches("paused")) {
 				newState = "playing";
 				player.start();
-				sendData();
+				sendData(false);
 			} 
 			if (!isPrepared){
 				Log.i("PlayerService", "Player Service playing");
@@ -538,16 +412,14 @@ public class PlayerService extends Service{
 					}
 				}
 			state = newState;
-
-			
 		}
+		
 		if (action.matches("next")) {
 			Log.i("PlayerService", "Player Service next track");
 			if (trackNum < (resources.size() - 1)) {
 				if (!player.isLooping()) {
 					trackNum = trackNum + 1;
-				}
-				
+				}	
 			}
 			player.stop();
 			player.reset();
@@ -582,7 +454,7 @@ public class PlayerService extends Service{
 			}
 		}
 		if (action.matches("info") && player.isPlaying()) {
-			sendData();
+			sendData(false);
 		}
 	}
 }

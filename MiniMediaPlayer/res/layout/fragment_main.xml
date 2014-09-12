@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Name: Devin "Lauren" Elder -->
+<!-- Date: 09/11/2014 -->
+<!-- Term: 1409 -->
+<!-- Project Name: Mini Media Player -->
+<!-- Assignment: MDF3 Week 2 -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"

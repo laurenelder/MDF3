@@ -1,3 +1,10 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/11/2014
+ * Term: 1409
+ * Project Name: Mini Media Player
+ * Assignment: MDF3 Week 2
+ */
+
 package com.example.minimediaplayer;
 
 import java.util.ArrayList;
@@ -5,19 +12,22 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainFragment extends Fragment{
 	
+
+
 	// Establish Variables
 	Context context;
 	boolean play;
@@ -28,11 +38,13 @@ public class MainFragment extends Fragment{
 	Button nextButton;
 	TextView songName;
 	ImageView image;
+	ProgressBar progress;
+	Integer trackProgress = 0;
+	CountDownTimer timer;
 	private onSelectedButton parentActivity;
 	
+	// Set interface to parentActivity
 	public interface onSelectedButton {
-//		public void serviceHandler(String intentAction);
-//		public void stopService();
 		public void buttonClick(String selectedButton);
 	}
 
@@ -59,7 +71,7 @@ public class MainFragment extends Fragment{
 		
 		View view = inflater.inflate(R.layout.activity_main, container);
 		
-		play = true;
+		// Establish connection to UI Elements
         previousButton = (Button)view.findViewById(R.id.previousBtn);
         repeatButton = (Button)view.findViewById(R.id.repeatBtn);
         playButton = (Button)view.findViewById(R.id.playBtn);
@@ -67,6 +79,12 @@ public class MainFragment extends Fragment{
         nextButton = (Button)view.findViewById(R.id.nextBtn);
         songName = (TextView)view.findViewById(R.id.songTitle);
         image = (ImageView)view.findViewById(R.id.thumbnailImage);
+        progress = (ProgressBar)view.findViewById(R.id.progressBar);
+        
+        // Stop timer during orientation change
+        if (timer != null) {
+        	stopTimer("dontRepeat");
+        }
         
         // Set OnClickListeners for Audio Buttons
         previousButton.setOnClickListener(new OnClickListener(){
@@ -75,8 +93,9 @@ public class MainFragment extends Fragment{
 			public void onClick(View v) {
 				// Call Handler Method to play previous track
 				parentActivity.buttonClick("previous");
-//				playButton.setBackgroundResource(R.drawable.ic_action_pause);
-				play = false;
+				if (timer != null) {
+					stopTimer("dontRepeat");
+				}
 			}
         	
         });
@@ -85,7 +104,6 @@ public class MainFragment extends Fragment{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-//				playerHandler("repeat");
 				parentActivity.buttonClick("repeat");
 			}
         
@@ -97,24 +115,8 @@ public class MainFragment extends Fragment{
 				/* Call Handler Method to play/pause track. Conditional 
 				 * changes button image based on whether or not media is playing.
 				 */
-//				Log.i("MainActivity", "Play button clicked");
 				parentActivity.buttonClick("play");
-//				bindService(playerIntent, this, Context.BIND_AUTO_CREATE);
-				if (play == true) {
-//					playButton.setBackgroundResource(R.drawable.ic_action_pause);
-					play = false;
-				} else {
-//					playButton.setBackgroundResource(R.drawable.ic_action_play);
-					play = true;
-				}
 			}
-
-/*			private void bindService(Intent playerIntent,
-					OnClickListener onClickListener, int bindAutoCreate) {
-				// TODO Auto-generated method stub
-				
-			}*/
-        	
         });
         stopButton.setOnClickListener(new OnClickListener(){
 
@@ -125,6 +127,9 @@ public class MainFragment extends Fragment{
 				Log.i("MainActivity", "Service Player stopped");
 				playButton.setBackgroundResource(R.drawable.ic_action_play);
 				parentActivity.buttonClick("stop");
+				if (timer != null) {
+					stopTimer("dontRepeat");
+				}
 			}
         	
         });
@@ -134,8 +139,9 @@ public class MainFragment extends Fragment{
 			public void onClick(View v) {
 				// Call Handler Method to play next track.
 				parentActivity.buttonClick("next");
-//				playButton.setBackgroundResource(R.drawable.ic_action_pause);
-				play = false;
+				if (timer != null) {
+					stopTimer("dontRepeat");
+				}
 			}
         	
         });
@@ -143,9 +149,38 @@ public class MainFragment extends Fragment{
 		return view;
 	}
 	
-	public void updateUI(ArrayList data) {
-//		ArrayList<String> data = (ArrayList)
+	// On view destroy stop timer
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		if (timer != null) {
+			stopTimer("dontRepeat");
+		}
+		super.onDestroy();
+	}
+	
+	/* StopTimer method stops timer unless the player is on repeat.
+	 * If player is on repeat the timer is reset.
+	 */
+	public void stopTimer(String doThis) {
+		if (doThis.matches("repeat")) {
+			progress.setProgress(0);
+			trackProgress = 0;
+			timer.start();
+		} else {
+			timer.cancel();
+			timer = null;
+			progress.setProgress(0);
+		}
+	}
+	
+	/* updateUI method updates song title, UI image, repeat button
+	 * alpha, progress bar, and sets the timer for the progress bar.
+	 */
+	public void updateUI(final ArrayList<String> data) {
+		
 		songName.setText(data.get(0).toString());
+		
 		if (data.get(1).toString().matches("crystallize")) {
 			image.setImageResource(R.drawable.crystallize);
 		}
@@ -164,6 +199,55 @@ public class MainFragment extends Fragment{
 			playButton.setBackgroundResource(R.drawable.ic_action_pause);
 		} else {
 			playButton.setBackgroundResource(R.drawable.ic_action_play);
+			timer.cancel();
+			timer = null;
+			progress.setProgress(trackProgress);
+		}
+		if (!data.get(4).toString().matches("none") && !data.get(4).toString().matches("none")) {
+			if (timer == null) {
+				String durationStr = data.get(4).toString();
+				Integer durationNum = Integer.parseInt(durationStr);
+				String progressStr = data.get(5).toString();
+				Integer progressNum = Integer.parseInt(progressStr);
+				Log.i("MainFragment", durationNum.toString());
+				Log.i("MainFragment", progressNum.toString());
+				
+				if (data.get(6).toString().matches("true") && timer != null) {
+					Log.i("MainFragment", "New Track Playing");
+					trackProgress = 0;
+					timer.cancel();
+					timer = null;
+					progress.setProgress(0);
+					progress.setMax(durationNum / 1000);
+				} else {
+					trackProgress = progressNum / 1000;
+					progress.setMax(durationNum / 1000);
+				}
+				
+				timer = new CountDownTimer((durationNum - progressNum), 1000) {
+
+					@Override
+					public void onTick(long millisUntilFinished) {
+						// TODO Auto-generated method stub
+						trackProgress++;
+						progress.setProgress(trackProgress);
+						Log.i("MainFragment", trackProgress.toString());
+					}
+
+					@Override
+					public void onFinish() {
+						// TODO Auto-generated method stub
+						/* If player is repeating then the timer and progress bar
+						 * are reset. If the player isn't repeating the timer is canceled.
+						 */
+						if (data.get(2).toString().matches("repeating")) {
+							stopTimer("repeat");
+						} else {
+							stopTimer("dontRepeat");
+						}
+					} 
+				}.start();
+			}
 		}
 	}
 }
