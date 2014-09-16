@@ -12,7 +12,6 @@ public class MainFragment extends Fragment {
 	
 	// Establish Variables
 	Context context;
-	private mainInterface mainActivity;
 	
 	public interface mainInterface {
 		
@@ -23,7 +22,7 @@ public class MainFragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		
-		context = getActivity();
+		context = this.getActivity();
 		
 		if (activity instanceof mainInterface) {
 			mainActivity = (mainInterface) activity;
@@ -33,6 +32,8 @@ public class MainFragment extends Fragment {
 		}
 	}
 
+	private mainInterface mainActivity;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

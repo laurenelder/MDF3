@@ -1,4 +1,3 @@
 INDEX VERSION 1.126+/Users/devinelder/Desktop/MDF3/Week 3/.metadata/.plugins/org.eclipse.jdt.core
 3691025016.index
-1376719118.index
 1437520091.index

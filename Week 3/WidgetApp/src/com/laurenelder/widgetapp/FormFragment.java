@@ -2,6 +2,7 @@ package com.laurenelder.widgetapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ClipData.Item;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class FormFragment extends Fragment {
 		// TODO Auto-generated method stub
 		
 		View formView = inflater.inflate(R.layout.activity_form, container);
+		
 		return formView;
 	}
 }

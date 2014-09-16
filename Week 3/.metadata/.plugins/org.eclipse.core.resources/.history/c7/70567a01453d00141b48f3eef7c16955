@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Widget App</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="store_label">Store Name:</string>
+    <string name="date_label">Date:</string>
+    <string name="list_label">Grocery List:</string>
+
+</resources>
