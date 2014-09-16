@@ -455,3 +455,11 @@ com.android.ddmlib.ShellCommandUnresponsiveException
 	at com.android.ddmlib.MonitorThread.callHandler(MonitorThread.java:414)
 	at com.android.ddmlib.MonitorThread.processClientActivity(MonitorThread.java:322)
 	at com.android.ddmlib.MonitorThread.run(MonitorThread.java:263)
+
+!ENTRY org.eclipse.ui.ide 4 4 2014-09-15 20:57:50.767
+!MESSAGE Problems saving workspace
+
+!ENTRY org.eclipse.ui.ide 2 1 2014-09-15 20:57:50.769
+!MESSAGE Problems occurred while trying to save the state of the workbench.
+!SUBENTRY 1 org.eclipse.core.resources 2 234 2014-09-15 20:57:50.769
+!MESSAGE The project description file (.project) for 'MiniMediaPlayer' was missing.  This file contains important information about the project.  A new project description file has been created, but some information about the project may have been lost.
