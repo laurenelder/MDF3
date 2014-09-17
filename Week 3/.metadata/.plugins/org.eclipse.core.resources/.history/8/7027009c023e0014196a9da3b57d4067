@@ -1,0 +1,100 @@
+package com.laurenelder.widgetapp;
+
+import java.util.Map;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+public class DetailActivity extends Activity implements DetailFragment.detailInterface{
+	
+	// Establish Variables
+	String tag = "DetailActivity";
+	Context context;
+	Intent intent;
+	String contentData = null;
+	FragmentManager detailMgr;
+	Fragment detailFrag;
+	SharedPreferences preferences;
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		finish();
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fragment_details);
+		context = getApplicationContext();
+		intent = this.getIntent();
+		contentData = intent.getExtras().getString("content").toString();
+		Log.i(tag, contentData.toString());
+		
+        // Get Shared Preferences
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		
+        // Set FragmentManager to allow calling methods in FormFragment
+        detailMgr = getFragmentManager();
+        detailFrag = (DetailFragment)detailMgr.findFragmentById(R.id.detailsFrag);
+		if(detailFrag == null) {
+			detailFrag = new DetailFragment();
+		} else {
+			if (contentData != null) {
+				((DetailFragment) detailFrag).updateUI(contentData);
+			}
+			
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.main, menu);
+		
+		menu.findItem(R.id.action_item).setIcon(R.drawable.ic_action_discard);
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+        int id = item.getItemId();
+        if (id == R.id.action_item) {
+        	String title = intent.getExtras().get("title").toString();
+    		if(!preferences.toString().isEmpty()) {
+    			Map<String,?> entries = preferences.getAll();
+    			for(Map.Entry<String,?> entry : entries.entrySet()){
+    				
+    				if (entry.getValue().toString().matches(title)) {
+    					preferences.edit().remove(entry.getKey());
+    				}
+    				
+    			}
+    		}
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+	}
+
+	public String getData() {
+		if (contentData != null) {
+			Log.i(tag, contentData.toString());
+			return contentData;
+		} else {
+			return null;
+		}
+	}
+}

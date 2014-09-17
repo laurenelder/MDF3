@@ -1,5 +1,7 @@
 package com.laurenelder.widgetapp;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData.Item;
@@ -8,11 +10,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class FormFragment extends Fragment {
 	
 	// Establish Variables
 	Context context;
+	TextView storeInput;
+	TextView dateInput;
+	TextView listInput;
 	private formInterface formActivity;
 	
 	public interface formInterface {
@@ -41,6 +48,35 @@ public class FormFragment extends Fragment {
 		
 		View formView = inflater.inflate(R.layout.activity_form, container);
 		
+		storeInput = (TextView)formView.findViewById(R.id.storeInput);
+		dateInput = (TextView)formView.findViewById(R.id.dateInput);
+		listInput = (TextView)formView.findViewById(R.id.listInput);
+		
 		return formView;
+	}
+	
+	public ArrayList<String> getData() {
+		if (!storeInput.getText().toString().matches("") &&
+				!dateInput.getText().toString().matches("") &&
+				!listInput.getText().toString().matches("")) {
+			ArrayList<String> allData = new ArrayList<String>();
+			allData.add("Store:");
+			allData.add(storeInput.getText().toString());
+			allData.add("Date:");
+			allData.add(dateInput.getText().toString());
+			allData.add("Grocery List:");
+			allData.add(listInput.getText().toString());
+/*			String allData = storeInput.getText().toString() + "\r\n" +
+					dateInput.getText().toString() + "\r\n" +
+					dateInput.getText().toString();*/
+			
+			Toast.makeText(context, "Data Saved", Toast.LENGTH_SHORT).show();
+			
+			return allData;
+		} else {
+			Toast.makeText(context, "Please input information in all " +
+					"fields before saving", Toast.LENGTH_SHORT).show();
+			return null;
+		}
 	}
 }

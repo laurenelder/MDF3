@@ -1,0 +1,85 @@
+package com.laurenelder.widgetapp;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+public class FormActivity  extends Activity implements FormFragment.formInterface{
+	
+	// Establish Variables
+	Context context;
+	FileManager fileMgr;
+	FragmentManager formMgr;
+	Fragment formFrag;
+	SharedPreferences preferences;
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		finish();
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fragment_form);
+		
+		context = getApplicationContext();
+		fileMgr = FileManager.getInstance();
+		
+        // Set FragmentManager to allow calling methods in FormFragment
+        formMgr = getFragmentManager();
+        formFrag = (FormFragment)formMgr.findFragmentById(R.id.formFrag);
+		if(formFrag == null) {
+			formFrag = new MainFragment();
+		}
+		
+/*		// Get Shared Preferences
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);*/
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.main, menu);
+		
+		menu.findItem(R.id.action_item).setIcon(R.drawable.ic_action_accept);
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (((FormFragment) formFrag).getData() != null) {
+			ArrayList<String> data = new ArrayList<String>();
+	        File checkForFile = getBaseContext().getFileStreamPath(data.get(1).toString() + 
+	        		data.get(3).toString());
+	        if (!checkForFile.exists()) {
+	        	String allData = data.get(0).toString() + " " + data.get(1).toString() + "r\n\" +
+	        			data.get(2).toString() + " " + data.get(3).toString() + "r\n\" +
+	        					data.get(4).toString() + " " + data.get(5).toString();
+	        	fileMgr.writeToFile(context, data.get(1).toString() + 
+		        		data.get(3).toString(), msg.obj.toString());
+	        }
+			finish();
+//			Toast.makeText(context, "Data Saved", Toast.LENGTH_SHORT).show();
+		} else {
+//			Toast.makeText(context, "Data Saved", Toast.LENGTH_SHORT).show();
+		}
+		
+		return true;
+	}
+}

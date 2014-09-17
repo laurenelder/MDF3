@@ -1,0 +1,70 @@
+package com.laurenelder.widgetapp;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.ClipData.Item;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class FormFragment extends Fragment {
+	
+	// Establish Variables
+	Context context;
+	TextView storeInput;
+	TextView dateInput;
+	TextView listInput;
+	private formInterface formActivity;
+	
+	public interface formInterface {
+		
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		
+		context = getActivity();
+		
+		if (activity instanceof formInterface) {
+			formActivity = (formInterface) activity;
+		} else {
+			throw new ClassCastException((activity.toString()) + 
+					"Did not impliment formInterface");
+		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		
+		View formView = inflater.inflate(R.layout.activity_form, container);
+		
+		storeInput = (TextView)formView.findViewById(R.id.storeInput);
+		dateInput = (TextView)formView.findViewById(R.id.dateInput);
+		listInput = (TextView)formView.findViewById(R.id.listInput);
+		
+		return formView;
+	}
+	
+	public String getData() {
+		if (!storeInput.getText().toString().matches("") &&
+				!dateInput.getText().toString().matches("") &&
+				!listInput.getText().toString().matches("")) {
+			String allData = storeInput.getText().toString() + "\r\n" +
+					dateInput.getText().toString() + "\r\n" +
+					dateInput.getText().toString();
+			return allData;
+		} else {
+			Toast.makeText(context, "Please input information in all" +
+					"fields before saving", Toast.LENGTH_LONG).toString();
+			return null;
+		}
+	}
+}

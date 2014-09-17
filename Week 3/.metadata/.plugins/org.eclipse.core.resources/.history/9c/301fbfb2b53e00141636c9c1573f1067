@@ -1,0 +1,71 @@
+package com.laurenelder.widgetapp;
+
+import android.content.Context;
+import android.widget.RemoteViews;
+import android.widget.RemoteViewsService.RemoteViewsFactory;
+
+public class WidgetViewFactory implements RemoteViewsFactory{
+
+	private static final int ID_CONSTANT = 0x0101010;
+	private Context context;
+	
+	public CollectionWidgetViewFactory(Context thisContext) {
+		context = thisContext;
+//		mArticles = new ArrayList<NewsArticle>();
+	}
+	
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDataSetChanged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public RemoteViews getViewAt(int position) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RemoteViews getLoadingView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getViewTypeCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean hasStableIds() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}
