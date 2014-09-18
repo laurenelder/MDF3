@@ -19,7 +19,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <!-- <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/> -->
             </intent-filter>
         </activity>
         <activity
@@ -30,7 +30,7 @@
             android:name=".FormActivity"
             android:label="@string/app_name" >
         </activity>
-        <receiver android:name=".SampleWidgetProvider" >
+        <receiver android:name=".WidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -38,7 +38,7 @@
             <meta-data android:name="android.appwidget.provider"
             	android:resource="@xml/widget_info" />
         </receiver>
-        <service android:name=".RemoteViewService"
+        <service android:name=".WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 

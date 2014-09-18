@@ -20,6 +20,7 @@ public class WidgetViewFactory implements RemoteViewsFactory{
 	
 	public WidgetViewFactory(Context thisContext) {
 		context = thisContext;
+		Log.i("WidgetViewFactory", "Constructor hit");
 //		mArticles = new ArrayList<NewsArticle>();
 	}
 	
@@ -27,10 +28,12 @@ public class WidgetViewFactory implements RemoteViewsFactory{
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		Log.i("WidgetViewFactory", "onCreate hit");
+		widgetListData = new ArrayList<String>();
 		if(!preferences.toString().isEmpty()) {
 			Map<String,?> entries = preferences.getAll();
 			for(Map.Entry<String,?> entry : entries.entrySet()){
-				
+				Log.i("WidgetViewFactory", entry.getValue().toString());
 				String fileName = entry.getValue().toString();
 				widgetListData.add(fileName);
 			}
@@ -58,8 +61,9 @@ public class WidgetViewFactory implements RemoteViewsFactory{
 	@Override
 	public RemoteViews getViewAt(int position) {
 		// TODO Auto-generated method stub
-		RemoteViews widgetItemView = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-		widgetItemView.setTextViewText(R.id.widget_list, widgetListData.get(position).toString());
+		RemoteViews widgetItemView = new RemoteViews(context.getPackageName(), R.layout.widget_item);
+		Log.i("WidgetViewFactory", widgetListData.get(position));
+		widgetItemView.setTextViewText(R.id.title, widgetListData.get(position).toString());
 		Intent intent = new Intent();
 		intent.putExtra(WidgetProvider.EXTRA_ITEM, widgetListData.get(position).toString());
 		widgetItemView.setOnClickFillInIntent(R.id.widget_list, intent);

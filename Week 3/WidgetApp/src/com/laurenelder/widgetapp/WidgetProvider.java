@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -12,7 +13,7 @@ public class WidgetProvider extends AppWidgetProvider {
 	public static final String ACTION_VIEW_DETAILS =
 			"com.laurenelder.android.ACTION_VIEW_DETAILS";
 	public static final String EXTRA_ITEM =
-			"com.laurenelder.android.CollectionWidgetProvider.EXTRA_ITEM";
+			"com.laurenelder.android.WidgetProvider.EXTRA_ITEM";
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -48,7 +49,10 @@ public class WidgetProvider extends AppWidgetProvider {
 	        	details.putExtra("title", title);
 /*	        	details.putExtra("content", groceryItems.get(position).information.toString());
 	        	details.putExtra("source", "app");*/
-	        	PendingIntent.getActivity(context, 0, details, 0);
+//	        	PendingIntent.getActivity(context, 0, details, 0);
+				details.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(details);
+				Log.i("WidgetProvider", "onReceive hit");
 			}
 		}
 
