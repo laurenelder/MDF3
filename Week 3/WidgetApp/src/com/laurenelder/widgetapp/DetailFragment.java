@@ -1,23 +1,30 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/18/2014
+ * Term: 1409
+ * Project Name: Widget App
+ * Assignment: MDF3 Week 3
+ */
+
 package com.laurenelder.widgetapp;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class DetailFragment extends Fragment {
-	
+
 	// Establish Variables
 	String tag = "DetailsFragment";
 	Context context;
 	TextView contentView;
 	private detailInterface detailActivity;
-	
+
+	// Set up interface to parent activity
 	public interface detailInterface {
 		public String getData();
 	}
@@ -26,9 +33,9 @@ public class DetailFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
-		
+
 		context = getActivity();
-		
+
 		if (activity instanceof detailInterface) {
 			detailActivity = (detailInterface) activity;
 		} else {
@@ -41,22 +48,18 @@ public class DetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		
+
 		View detailView = inflater.inflate(R.layout.activity_details, container);
-		
+
+		// Initialize Variables
 		contentView = (TextView)detailView.findViewById(R.id.listDetails);
 		contentView.setKeyListener(null);
-		
-//		updateUI();
-//		Log.i(tag, detailActivity.getData().toString());
-		
+
 		return detailView;
 	}
-	
+
+	// updateUI is called from DetailActivity to load data in the TextView
 	public void updateUI(String content) {
-/*		if (detailActivity.getData() != null) {
-			contentView.setText(detailActivity.getData());
-		}*/
 		contentView.setText(content);
 	}
 }

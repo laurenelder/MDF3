@@ -1,3 +1,10 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/18/2014
+ * Term: 1409
+ * Project Name: Widget App
+ * Assignment: MDF3 Week 3
+ */
+
 package com.laurenelder.widgetapp;
 
 import java.util.ArrayList;
@@ -17,13 +24,12 @@ public class WidgetViewFactory implements RemoteViewsFactory{
 	private Context context;
 	SharedPreferences preferences;
 	public ArrayList<String> widgetListData = null;
-	
+
 	public WidgetViewFactory(Context thisContext) {
 		context = thisContext;
 		Log.i("WidgetViewFactory", "Constructor hit");
-//		mArticles = new ArrayList<NewsArticle>();
 	}
-	
+
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
@@ -43,7 +49,16 @@ public class WidgetViewFactory implements RemoteViewsFactory{
 	@Override
 	public void onDataSetChanged() {
 		// TODO Auto-generated method stub
-		
+		Log.i("WidgetViewFactory", "onDataSetChanged hit");
+		widgetListData.removeAll(widgetListData);
+		if(!preferences.toString().isEmpty()) {
+			Map<String,?> entries = preferences.getAll();
+			for(Map.Entry<String,?> entry : entries.entrySet()){
+				Log.i("WidgetViewFactory", entry.getValue().toString());
+				String fileName = entry.getValue().toString();
+				widgetListData.add(fileName);
+			}
+		}
 	}
 
 	@Override
@@ -63,10 +78,10 @@ public class WidgetViewFactory implements RemoteViewsFactory{
 		// TODO Auto-generated method stub
 		RemoteViews widgetItemView = new RemoteViews(context.getPackageName(), R.layout.widget_item);
 		Log.i("WidgetViewFactory", widgetListData.get(position));
-		widgetItemView.setTextViewText(R.id.title, widgetListData.get(position).toString());
+		widgetItemView.setTextViewText(R.id.widget_title, widgetListData.get(position).toString());
 		Intent intent = new Intent();
 		intent.putExtra(WidgetProvider.EXTRA_ITEM, widgetListData.get(position).toString());
-		widgetItemView.setOnClickFillInIntent(R.id.widget_list, intent);
+		widgetItemView.setOnClickFillInIntent(R.id.widget_item, intent);
 		return widgetItemView;
 	}
 

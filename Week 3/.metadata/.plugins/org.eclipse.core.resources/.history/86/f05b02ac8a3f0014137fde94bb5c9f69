@@ -1,0 +1,116 @@
+package com.laurenelder.widgetapp;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+public class FormActivity  extends Activity implements FormFragment.formInterface{
+	
+	// Establish Variables
+	Context context;
+	FileManager fileMgr;
+	FragmentManager formMgr;
+	Fragment formFrag;
+	Intent returnedIntent;
+	SharedPreferences preferences;
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		setResult(RESULT_CANCELED, returnedIntent);
+		finish();
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fragment_form);
+		
+		context = getApplicationContext();
+		fileMgr = FileManager.getInstance();
+		Intent returnedIntent = new Intent();
+		
+        // Set FragmentManager to allow calling methods in FormFragment
+        formMgr = getFragmentManager();
+        formFrag = (FormFragment)formMgr.findFragmentById(R.id.formFrag);
+		if(formFrag == null) {
+			formFrag = new MainFragment();
+		}
+		
+		// Get Shared Preferences
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.main, menu);
+		
+		menu.findItem(R.id.action_item).setIcon(R.drawable.ic_action_accept);
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (((FormFragment) formFrag).getData() != null) {
+			ArrayList<String> data = new ArrayList<String>();
+			data = ((FormFragment) formFrag).getData();
+/*	        File checkForFile = getBaseContext().getFileStreamPath(data.get(1).toString() + " " +
+	        		data.get(3).toString());*/
+//	        if (!checkForFile.exists()) {
+	        	String allData = data.get(0).toString() + "  " + data.get(1).toString() + "\n" +
+	        			data.get(2).toString() + "  " + data.get(3).toString() + "\n" +
+	        					data.get(4).toString() + "  " + data.get(5).toString();
+	        	String title = data.get(1).toString() + " " +
+		        		data.get(3).toString();
+	        	if (title.contains("/")) {
+	        		title = title.replace("/", ".");
+	        	}
+	        	fileMgr.writeToFile(context, title, allData);
+	        	saveTitle(title);
+//	        }
+	        	
+	        setResult(RESULT_OK, returnedIntent);
+			finish();
+			
+/*            Intent updateIntent = new Intent(this, WidgetProvider.class);
+            updateIntent.setAction(WidgetProvider.UPDATE_ACTION);
+            sendBroadcast(updateIntent); */
+			
+//			Toast.makeText(context, "Data Saved", Toast.LENGTH_SHORT).show();
+		} else {
+//			Toast.makeText(context, "Data Not Saved", Toast.LENGTH_SHORT).show();
+		}
+		
+		return true;
+	}
+	
+	public void saveTitle(String title) {
+		Integer listCount = 0;
+		if(!preferences.toString().isEmpty()) {
+			Map<String,?> entries = preferences.getAll();
+			for(Map.Entry<String,?> entry : entries.entrySet()){
+				listCount++;
+			}
+		}
+		preferences.edit().putString("fileName" + listCount.toString(), title).apply();
+	}
+}

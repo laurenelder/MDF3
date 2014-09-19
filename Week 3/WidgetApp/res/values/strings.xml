@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Name: Devin "Lauren" Elder --> 
+<!-- Date: 09/18/2014 -->
+<!-- Term: 1409 -->
+<!-- Project Name: Widget App -->
+<!-- Assignment: MDF3 Week 3 -->
+
 <resources>
 
     <string name="app_name">Widget App</string>
@@ -11,5 +18,7 @@
     <string name="store_hint">Wal-Mart</string>
     <string name="date_hint">09/15/2014</string>
     <string name="list_hint">Soup, Bananas, Pepsi, Bread, Tea, Strawberries</string>
+    <string name="widget_hint">No Data Stored</string>
+    <string name="widget_button">Add List</string>
 
 </resources>

@@ -28,13 +28,12 @@ public final class R {
         public static final int ic_launcher=0x7f020003;
     }
     public static final class id {
-        public static final int action_item=0x7f090011;
-        public static final int article_item=0x7f09000d;
+        public static final int action_item=0x7f090012;
         public static final int container=0x7f090008;
         public static final int dateInput=0x7f090005;
         public static final int dateLabel=0x7f090004;
         public static final int detailsFrag=0x7f09000a;
-        public static final int empty=0x7f090010;
+        public static final int empty=0x7f090011;
         public static final int formFrag=0x7f09000b;
         public static final int formTitle=0x7f090001;
         public static final int list=0x7f090009;
@@ -44,8 +43,10 @@ public final class R {
         public static final int mainFrag=0x7f09000c;
         public static final int storeInput=0x7f090003;
         public static final int storeLabel=0x7f090002;
-        public static final int title=0x7f09000e;
-        public static final int widget_list=0x7f09000f;
+        public static final int widgetButton=0x7f09000f;
+        public static final int widget_item=0x7f09000d;
+        public static final int widget_list=0x7f090010;
+        public static final int widget_title=0x7f09000e;
     }
     public static final class layout {
         public static final int activity_details=0x7f030000;
@@ -71,6 +72,8 @@ public final class R {
         public static final int list_label=0x7f060006;
         public static final int store_hint=0x7f060007;
         public static final int store_label=0x7f060004;
+        public static final int widget_button=0x7f06000b;
+        public static final int widget_hint=0x7f06000a;
     }
     public static final class style {
         /** 

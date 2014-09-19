@@ -1,8 +1,22 @@
+<!-- Name: Devin "Lauren" Elder --> 
+<!-- Date: 09/18/2014 -->
+<!-- Term: 1409 -->
+<!-- Project Name: Widget App -->
+<!-- Assignment: MDF3 Week 3 -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="@android:color/background_dark" >
+    
+    <Button android:id="@+id/widgetButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#606060"
+        android:gravity="center"
+        android:text="@string/widget_button" />
+        
     <ListView android:id="@+id/widget_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
@@ -11,5 +25,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Empty" />
+        android:text="@string/widget_hint" />
 </LinearLayout>
