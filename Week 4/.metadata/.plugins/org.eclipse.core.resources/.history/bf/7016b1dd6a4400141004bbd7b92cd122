@@ -1,0 +1,23 @@
+package com.laurenelder.photolocationapp;
+
+public class MarkerData {
+
+	public String title;
+	public String info;
+	public Double latitude;
+	public Double longitude;
+	public int id;
+	
+	public MarkerData(String thisTitle, String thisInfo, Double thisLatitude, 
+			Double thisLongitude, int thisId) {
+		title = thisTitle;
+		info = thisInfo;
+		latitude = thisLatitude;
+		longitude = thisLongitude;
+		id = thisId;
+	}
+	
+	public String toString() {
+		return title;
+	}
+}

@@ -1,0 +1,36 @@
+package com.laurenelder.photolocationapp;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.ImageView;
+
+public class DetailsActivity extends Activity implements DetailsFragment.detailsInterface {
+
+	String tag = "DetailsActivity";
+	Intent finishedIntent = new Intent();
+	Intent thisIntent;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fragment_details);
+		
+		thisIntent = this.getIntent();
+		String title = thisIntent.getExtras().get("Title").toString();
+		String info = thisIntent.getExtras().getString("Information").toString();
+		String image = thisIntent.getExtras().getString("Image").toString();
+		String latitude = thisIntent.getExtras().getString("Latitude").toString();
+		String longitude = thisIntent.getExtras().getString("Longitude").toString();
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		setResult(RESULT_OK, finishedIntent);
+		finish();
+	}
+
+}

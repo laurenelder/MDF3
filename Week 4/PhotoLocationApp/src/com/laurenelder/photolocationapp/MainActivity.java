@@ -88,7 +88,7 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
         int id = item.getItemId();
         if (id == R.id.action_item) {
         	Intent formIntent = new Intent(context, FormActivity.class);
-        	startActivity(formIntent);
+        	startAct(formIntent, "formButton");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -104,7 +104,30 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
 //    	((MainFragment)mapFrag).addPin(thisLatitude, thisLongitude, thisTitle);
     }
     
-    public void startAct(Intent actIntent) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == 1) {
+			if(resultCode == RESULT_OK){
+
+			}
+			if (resultCode == RESULT_CANCELED) {
+
+			}
+		}
+	}
+    
+    public void startAct(Intent actIntent, String selection) {
+    	if (!selection.matches("formButton") || !selection.matches("formMap")) {
+    		for (int k = 0; k < savedData.size(); k++) {
+    			if (savedData.get(k).title.matches(selection)) {
+    				actIntent.putExtra("Title", savedData.get(k).title.toString());
+    				actIntent.putExtra("Information", savedData.get(k).info.toString());
+    				actIntent.putExtra("Image", savedData.get(k).image.toString());
+    				actIntent.putExtra("Latitude", savedData.get(k).latitude.toString());
+    				actIntent.putExtra("Longitude", savedData.get(k).longitude.toString());
+    			}
+    		}
+    	}
     	startActivityForResult(actIntent, 1);
     }
     
@@ -117,6 +140,7 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
     	pinData.add(savedData.get(dataObjNum).title.toString());
     	pinData.add(savedData.get(dataObjNum).latitude.toString());
     	pinData.add(savedData.get(dataObjNum).longitude.toString());
+    	pinData.add(savedData.get(dataObjNum).info.toString());
     	return pinData;
     }
     

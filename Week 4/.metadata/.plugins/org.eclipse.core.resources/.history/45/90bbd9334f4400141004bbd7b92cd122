@@ -1,0 +1,129 @@
+package com.laurenelder.photolocationapp;
+
+import java.util.ArrayList;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.location.LocationManager;
+//import com.google.android.gms.maps.MapFragment;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
+public class MainFragment extends MapFragment implements OnInfoWindowClickListener {
+	
+	private static final int REQUEST_ENABLE_GPS = 0x02001;
+	Context context;
+	GoogleMap mainMap;
+	
+	private mainInterface mainActivity;
+
+	// Set up interface
+	public interface mainInterface {
+		public int sendNum();
+		public ArrayList<String> sendData(int dataObj);
+		public void startAct(Intent actIntent, String selection);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+
+		context = getActivity();
+
+		if (activity instanceof mainInterface) {
+			mainActivity = (mainInterface) activity;
+		} else {
+			throw new ClassCastException((activity.toString()) + 
+					"Did not impliment mainInterface");
+		}
+	}
+
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
+		
+		mainMap = getMap();
+		
+//		mainMap.animateCamera(CameraUpdateFactory.newLatLngZoom
+//				(new LatLng(latit, latit), 10));
+		
+		int num = mainActivity.sendNum();
+		for (int i = 0; i < num; i++) {
+			ArrayList<String> pindata = new ArrayList<String>();
+			pindata = mainActivity.sendData(i);
+			String title = pindata.get(0);
+			String latit = pindata.get(1);
+			String longit = pindata.get(2);
+			addPin(latit, longit, title);
+		}
+		mainMap.setInfoWindowAdapter(new MarkerAdapter());
+		mainMap.setOnInfoWindowClickListener(this);
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker arg0) {
+		// TODO Auto-generated method stub
+		Intent detailIntent = new Intent(context, DetailsActivity.class);
+		mainActivity
+	}
+
+/*	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		View mainView = inflater.inflate(R.layout.activity_main, container);
+		return mainView;
+	}*/
+	
+	public void addPin(String latit, String longit, String pinTitle) {
+		if (mainMap != null) {
+			mainMap.addMarker(new MarkerOptions().position
+					(new LatLng(Double.parseDouble(latit),Double.parseDouble(longit)))
+					.title(pinTitle));
+		}
+	}
+
+	
+	public void updateMap(double latitude, double longitude) {
+		mainMap.animateCamera(CameraUpdateFactory.newLatLngZoom
+		(new LatLng(latitude, longitude), 14));
+	}
+	
+	private class MarkerAdapter implements InfoWindowAdapter {
+		
+		TextView mText;
+
+		public MarkerAdapter() {
+			mText = new TextView(getActivity());
+		}
+
+		@Override
+		public View getInfoContents(Marker marker) {
+			mText.setText(marker.getTitle());
+			return mText;
+		}
+
+		@Override
+		public View getInfoWindow(Marker marker) {
+			return null;
+		}
+	}
+}
+
+
