@@ -135,6 +135,29 @@ public class MainFragment extends MapFragment implements OnInfoWindowClickListen
 	    	markerData.add(newMarker);
 		}
 	}
+
+	public void resetMap() {
+		mainMap.clear();
+		int num = mainActivity.sendNum();
+		for (int i = 0; i < num; i++) {
+			ArrayList<String> pindata = new ArrayList<String>();
+			pindata = mainActivity.sendData(i);
+			String title = pindata.get(0);
+			String latit = pindata.get(1);
+			String longit = pindata.get(2);
+			String info = pindata.get(3);
+			addPin(latit, longit, title, info);
+		}
+		for (int q = 0; q < markerData.size(); q++) {
+			mainMap.addMarker(new MarkerOptions().position
+					(new LatLng(markerData.get(q).latitude,markerData.get(q).longitude))
+					.title(markerData.get(q).title));
+//			additionalInfo = markerData.get(q).info;
+			
+//			mainMap.setInfoWindowAdapter(new MarkerAdapter());
+			
+		}
+	}
 	
 	public void updateMap(double latitude, double longitude) {
 		mainMap.animateCamera(CameraUpdateFactory.newLatLngZoom

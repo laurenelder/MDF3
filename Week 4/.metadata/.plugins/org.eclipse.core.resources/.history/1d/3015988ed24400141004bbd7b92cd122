@@ -122,10 +122,6 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
 				Log.i(tag, "Result Ok - Calling resetMap");
 				locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
 //				((MainFragment) mapFrag).getLoaderManager();
-				FragmentTransaction transaction = fragMgr.beginTransaction();
-				transaction.detach(mapFrag);
-				transaction.attach(mapFrag);
-				transaction.commit();
 			}
 			if (resultCode == RESULT_CANCELED) {
 				File checkForFile = getBaseContext().getFileStreamPath(getResources()

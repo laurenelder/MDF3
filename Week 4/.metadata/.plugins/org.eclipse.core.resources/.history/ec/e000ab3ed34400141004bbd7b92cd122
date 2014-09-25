@@ -92,25 +92,10 @@ public class FormActivity extends Activity implements FormFragment.formInterface
 		// TODO Auto-generated method stub
         int id = item.getItemId();
         if (id == R.id.action_item) {
+    		locMgr = (LocationManager)getSystemService(LOCATION_SERVICE);
+    		locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
+    		loc = locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     		Log.i(tag, "Action Button Hit");
-    		
-    		if (((FormFragment) formFrag).sendData() != null) {
-    			Log.i(tag, "sendData method not null");
-    			ArrayList<String> currentData = new ArrayList<String>();
-    			currentData = ((FormFragment) formFrag).sendData();
-    			if (formIntent.getExtras() != null) {
-    				setData(currentData.get(0).toString(), currentData.get(1).toString(), 
-    						currentData.get(2).toString(), formIntent.getExtras()
-    						.getString("Latitude").toString(), formIntent.getExtras()
-    						.getString("Longitude"));
-    				saveData();
-    			} else {
-    	    		locMgr = (LocationManager)getSystemService(LOCATION_SERVICE);
-    	    		locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-    	    		loc = locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-    			}
-    		}
-    		
     		return true;
         }
         return super.onOptionsItemSelected(item);
@@ -266,10 +251,16 @@ public class FormActivity extends Activity implements FormFragment.formInterface
 		if (((FormFragment) formFrag).sendData() != null) {
 			Log.i(tag, "sendData method not null");
 			currentData = ((FormFragment) formFrag).sendData();
-			
+			if (formIntent.getExtras() != null) {
+				setData(currentData.get(0).toString(), currentData.get(1).toString(), 
+						currentData.get(2).toString(), formIntent.getExtras()
+						.getString("Latitude").toString(), formIntent.getExtras()
+						.getString("Longitude").toString());
+			} else {
 				setData(currentData.get(0).toString(), currentData.get(1).toString(), 
 						currentData.get(2).toString(), String.valueOf(location.getLatitude()), 
 						String.valueOf(location.getLongitude()));
+			}
 
 			saveData();
 		}

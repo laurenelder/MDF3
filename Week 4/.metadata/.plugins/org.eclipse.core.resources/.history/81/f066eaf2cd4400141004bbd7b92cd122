@@ -135,6 +135,7 @@ public class MainFragment extends MapFragment implements OnInfoWindowClickListen
 	    	markerData.add(newMarker);
 		}
 	}
+
 	
 	public void updateMap(double latitude, double longitude) {
 		mainMap.animateCamera(CameraUpdateFactory.newLatLngZoom
