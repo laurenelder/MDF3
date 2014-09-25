@@ -1,3 +1,10 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/25/2014
+ * Term: 1409
+ * Project Name: Photo Location App
+ * Assignment: MDF3 Week 4
+ */
+
 package com.laurenelder.photolocationapp;
 
 import java.io.BufferedInputStream;

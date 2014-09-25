@@ -1,3 +1,10 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/25/2014
+ * Term: 1409
+ * Project Name: Photo Location App
+ * Assignment: MDF3 Week 4
+ */
+
 package com.laurenelder.photolocationapp;
 
 import java.io.File;
@@ -24,7 +31,8 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends Activity implements MainFragment.mainInterface, LocationListener {
-	
+
+	// Establish Variables
 	Context context;
 	String tag = "MainActivity";
 	FileManager fileManager;
@@ -34,154 +42,139 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
 	Fragment mapFrag;
 	List<Data> savedData = new ArrayList<Data>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_main);
-        
-        context = this;
-        
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fragment_main);
+
+		context = this;
+
+		// Setup FragmentManager to call methods in MainFragment
 		fragMgr = getFragmentManager();
 		mapFrag = (MainFragment)fragMgr.findFragmentById(R.id.mainFrag);
 		if(mapFrag == null) {
 			mapFrag = new MainFragment();
 		}
-		
-        locMgr = (LocationManager)getSystemService(LOCATION_SERVICE);
-//        locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, this);
-        locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-        loc = locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        if(loc != null) {
- //       	((MainFragment)mapFrag).updateMap(loc.getLatitude(), loc.getLongitude());
-        }
-        
+		// Setup LocationManager for GPS updates
+		locMgr = (LocationManager)getSystemService(LOCATION_SERVICE);
+		//        locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, this);
+		locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
+		loc = locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+		// Check for saved file. If exists, read and parse file
 		fileManager = FileManager.getInstance();
 		File checkForFile = getBaseContext().getFileStreamPath(getResources()
 				.getString(R.string.data_file_name));
 		if (checkForFile.exists()) {
-        	String fileContent = fileManager.readFromFile(context, getResources()
-    				.getString(R.string.data_file_name));
-        	if (fileContent != null) {
-        		parseData(fileContent.toString());
-        		Log.i(tag, fileContent.toString());
-        	}
+			String fileContent = fileManager.readFromFile(context, getResources()
+					.getString(R.string.data_file_name));
+			if (fileContent != null) {
+				parseData(fileContent.toString());
+				Log.i(tag, fileContent.toString());
+			}
 		}
-        
-    }
+
+	}
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        
-        menu.findItem(R.id.action_item).setIcon(R.drawable.ic_action_new);
-        
-        return true;
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_item) {
-        	Intent formIntent = new Intent(context, FormActivity.class);
-        	startAct(formIntent, "formButton");
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    
-    public void setData (String thisTitle, String thisInfo, String thisImage, 
-    		String thisLatitude, String thisLongitude) {
-    	
-    	Data newSavedObj = new Data(thisTitle, thisInfo, thisImage, 
-    			thisLatitude, thisLongitude);
-    	savedData.add(newSavedObj);
-    	
-//    	((MainFragment)mapFrag).addPin(thisLatitude, thisLongitude, thisTitle);
-    }
-    
+		menu.findItem(R.id.action_item).setIcon(R.drawable.ic_action_new);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_item) {
+			
+			// formIntent opens the FormActivity when action bar button is clicked
+			Intent formIntent = new Intent(context, FormActivity.class);
+			startAct(formIntent, "formButton");
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	// setData method adds data to custom object after file is parsed
+	public void setData (String thisTitle, String thisInfo, String thisImage, 
+			String thisLatitude, String thisLongitude) {
+
+		Data newSavedObj = new Data(thisTitle, thisInfo, thisImage, 
+				thisLatitude, thisLongitude);
+		savedData.add(newSavedObj);
+	}
+
+	// onActivityResult refreshes the MapFragment after the MainActivity is revisited
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == 1) {
-			if(resultCode == RESULT_OK){
-				File checkForFile = getBaseContext().getFileStreamPath(getResources()
+			File checkForFile = getBaseContext().getFileStreamPath(getResources()
+					.getString(R.string.data_file_name));
+			if (checkForFile.exists()) {
+				String fileContent = fileManager.readFromFile(context, getResources()
 						.getString(R.string.data_file_name));
-				if (checkForFile.exists()) {
-		        	String fileContent = fileManager.readFromFile(context, getResources()
-		    				.getString(R.string.data_file_name));
-		        	if (fileContent != null) {
-		        		parseData(fileContent.toString());
-		        		Log.i(tag, fileContent.toString());
-		        	}
+				if (fileContent != null) {
+					parseData(fileContent.toString());
+					Log.i(tag, fileContent.toString());
 				}
-				Log.i(tag, "Result Ok - Calling resetMap");
-				locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-//				((MainFragment) mapFrag).getLoaderManager();
-				FragmentTransaction transaction = fragMgr.beginTransaction();
-				transaction.detach(mapFrag);
-				transaction.attach(mapFrag);
-				transaction.commit();
 			}
-			if (resultCode == RESULT_CANCELED) {
-				File checkForFile = getBaseContext().getFileStreamPath(getResources()
-						.getString(R.string.data_file_name));
-				if (checkForFile.exists()) {
-		        	String fileContent = fileManager.readFromFile(context, getResources()
-		    				.getString(R.string.data_file_name));
-		        	if (fileContent != null) {
-		        		parseData(fileContent.toString());
-		        		Log.i(tag, fileContent.toString());
-		        	}
-				}
-				Log.i(tag, "Result Cancelled - Calling resetMap");
-				locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-//				((MainFragment) mapFrag).resetMap();
-				FragmentTransaction transaction = fragMgr.beginTransaction();
-				transaction.detach(mapFrag);
-				transaction.attach(mapFrag);
-				transaction.commit();
-			}
+
+			locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
+			FragmentTransaction transaction = fragMgr.beginTransaction();
+			transaction.detach(mapFrag);
+			transaction.attach(mapFrag);
+			transaction.commit();
 		}
 	}
-    
-    public void startAct(Intent actIntent, String selection) {
-    	if (!selection.matches("formButton") || !selection.matches("formMap")) {
-    		for (int k = 0; k < savedData.size(); k++) {
-    			if (savedData.get(k).title.matches(selection)) {
-    				actIntent.putExtra("Title", savedData.get(k).title.toString());
-    				actIntent.putExtra("Information", savedData.get(k).info.toString());
-    				actIntent.putExtra("Image", savedData.get(k).image.toString());
-    				actIntent.putExtra("Latitude", savedData.get(k).latitude.toString());
-    				actIntent.putExtra("Longitude", savedData.get(k).longitude.toString());
-    			}
-    		}
-    	}
-    	startActivityForResult(actIntent, 1);
-    }
-    
-    public int sendNum() {
-    	return savedData.size();
-    }
-    
-    public ArrayList<String> sendData(int dataObjNum) {
-    	ArrayList<String> pinData = new ArrayList<String>();
-    	pinData.add(savedData.get(dataObjNum).title.toString());
-    	pinData.add(savedData.get(dataObjNum).latitude.toString());
-    	pinData.add(savedData.get(dataObjNum).longitude.toString());
-    	pinData.add(savedData.get(dataObjNum).info.toString());
-    	return pinData;
-    }
-    
-    public void parseData (String rawData) {
-    	
+
+	/* startAct method starts new activity by passing the new Intent as argument.
+		If form activity is not to be started extras are added to the Intent for the 
+		Detail Activity UI.
+	 */
+	public void startAct(Intent actIntent, String selection) {
+		if (!selection.matches("formButton") || !selection.matches("formMap")) {
+			for (int k = 0; k < savedData.size(); k++) {
+				if (savedData.get(k).title.matches(selection)) {
+					actIntent.putExtra("Title", savedData.get(k).title.toString());
+					actIntent.putExtra("Information", savedData.get(k).info.toString());
+					actIntent.putExtra("Image", savedData.get(k).image.toString());
+					actIntent.putExtra("Latitude", savedData.get(k).latitude.toString());
+					actIntent.putExtra("Longitude", savedData.get(k).longitude.toString());
+				}
+			}
+		}
+		startActivityForResult(actIntent, 1);
+	}
+
+	// sendNum method returns the number of saved objects to the MainFragment
+	public int sendNum() {
+		return savedData.size();
+	}
+
+	public ArrayList<String> sendData(int dataObjNum) {
+		ArrayList<String> pinData = new ArrayList<String>();
+		pinData.add(savedData.get(dataObjNum).title.toString());
+		pinData.add(savedData.get(dataObjNum).latitude.toString());
+		pinData.add(savedData.get(dataObjNum).longitude.toString());
+		pinData.add(savedData.get(dataObjNum).info.toString());
+		return pinData;
+	}
+
+	// parsedData method is passed raw text from file, parses, and calls setData for each JSON object.
+	public void parseData (String rawData) {
+
 		JSONObject mainObject = null;
 		JSONArray subObject = null;
-		
+
 		try {
 			mainObject = new JSONObject(rawData);
 		} catch (JSONException e) {
@@ -196,26 +189,26 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		for (int i = 0; i < subObject.length(); i++) {
-			
+
 			JSONObject dataObj = null;
 			try {
 				if (subObject != null) {
 					dataObj = subObject.getJSONObject(i);
-					
+
 					String title = dataObj.getString("Title");
 					String info = dataObj.getString("Information");
 					String image = dataObj.getString("Image");
 					String latitude = dataObj.getString("Latitude");
 					String longitude = dataObj.getString("Longitude");
-					
+
 					Log.i(tag, title.toString());
 					Log.i(tag, info.toString());
 					Log.i(tag, latitude.toString());
 					Log.i(tag, longitude.toString());
 					Log.i(tag, image.toString());
-					
+
 					setData(title, info, image, latitude, longitude);
 				}
 			} catch (JSONException e) {
@@ -223,9 +216,9 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
 				e.printStackTrace();
 			}
 		}
-    }
+	}
 
-
+	// onLocationChanged updates the MapFragment with current GPS location.
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
@@ -236,20 +229,20 @@ public class MainActivity extends Activity implements MainFragment.mainInterface
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

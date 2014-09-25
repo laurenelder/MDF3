@@ -1,3 +1,10 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/25/2014
+ * Term: 1409
+ * Project Name: Photo Location App
+ * Assignment: MDF3 Week 4
+ */
+
 package com.laurenelder.photolocationapp;
 
 import java.util.ArrayList;
@@ -15,17 +22,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.laurenelder.photolocationapp.FormFragment.formInterface;
 
 public class FormFragment extends Fragment {
 
+	// Establish Variables
 	Context context;
 	String tag = "FormFragment";
 	ImageButton addImage;
@@ -59,7 +62,8 @@ public class FormFragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View formView = inflater.inflate(R.layout.activity_form, container);
-		
+
+		// Initialize Variables
 		titleInput = (EditText)formView.findViewById(R.id.formTitleInput);
 		infoInput = (EditText)formView.findViewById(R.id.formInfoInput);
 		addImage = (ImageButton)formView.findViewById(R.id.addImage);
@@ -68,19 +72,21 @@ public class FormFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				// Start Camera when image button is clicked
 				formActivity.startCamera();
 			}
-			
+
 		});
-		
+
 		return formView;
 	}
-	
+
+	// sendData method is called to send UI data back to the FormActivity
 	public ArrayList<String> sendData() {
 		if (!titleInput.getText().toString().matches("") && 
 				!infoInput.getText().toString().matches("") && 
 				imageInput != null) {
-			
+
 			ArrayList<String> thisData = new ArrayList<String>();
 			thisData.add(titleInput.getText().toString());
 			thisData.add(infoInput.getText().toString());
@@ -91,7 +97,10 @@ public class FormFragment extends Fragment {
 			return null;
 		}
 	}
-	
+
+	/* updateImageButton method is called after the camera returns an image.
+	 * This method updates the image button to show the image that was taken.
+	 */
 	public void updateImageButton(Intent data, Uri iUri) {
 		if (data == null) {
 			addImage.setImageBitmap(BitmapFactory.decodeFile(iUri.getPath()));

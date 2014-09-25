@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Name: Devin "Lauren" Elder -->
+<!-- Date: 09/25/2014 -->
+<!-- Term: 1409 -->
+<!-- Project Name: Photo Location App -->
+<!-- Assignment: MDF3 Week 4 -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        android:text="Title"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageView
@@ -27,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:text="Information"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -36,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:text="Latitude:"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -45,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:text="Longitude:"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>

@@ -1,8 +1,24 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/25/2014
+ * Term: 1409
+ * Project Name: Photo Location App
+ * Assignment: MDF3 Week 4
+ */
+
 package com.laurenelder.photolocationapp;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,29 +30,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.Context;
-import android.content.Intent;
-import android.location.LocationManager;
-//import com.google.android.gms.maps.MapFragment;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.TextView;
-
 public class MainFragment extends MapFragment implements OnInfoWindowClickListener, OnMapLongClickListener {
-	
+
 	private static final int REQUEST_ENABLE_GPS = 0x02001;
-	
+
+	// Establish Variables
 	Context context;
 	String tag = "MainFragment";
 	GoogleMap mainMap;
 	String additionalInfo;
 	List<MarkerData> markerData = new ArrayList<MarkerData>();
-	
+
 	private mainInterface mainActivity;
 
 	// Set up interface
@@ -61,17 +65,16 @@ public class MainFragment extends MapFragment implements OnInfoWindowClickListen
 		}
 	}
 
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
-		
+
 		mainMap = getMap();
 		
-//		mainMap.animateCamera(CameraUpdateFactory.newLatLngZoom
-//				(new LatLng(latit, latit), 10));
-		
+		/* Get number of saved objects in MainActivity and add data to local
+		 * ArrayList.
+		 */
 		int num = mainActivity.sendNum();
 		for (int i = 0; i < num; i++) {
 			ArrayList<String> pindata = new ArrayList<String>();
@@ -82,28 +85,29 @@ public class MainFragment extends MapFragment implements OnInfoWindowClickListen
 			String info = pindata.get(3);
 			addPin(latit, longit, title, info);
 		}
+		
+		// Set Map Adapters and OnClickListeners
 		mainMap.setInfoWindowAdapter(new MarkerAdapter());
 		mainMap.setOnInfoWindowClickListener(this);
 		mainMap.setOnMapLongClickListener(this);
-		
+
+		// Add markers to Map
 		for (int q = 0; q < markerData.size(); q++) {
 			mainMap.addMarker(new MarkerOptions().position
 					(new LatLng(markerData.get(q).latitude,markerData.get(q).longitude))
 					.title(markerData.get(q).title));
-//			additionalInfo = markerData.get(q).info;
-			
-//			mainMap.setInfoWindowAdapter(new MarkerAdapter());
-			
 		}
 	}
 
+	// onInfoWindowClick opens the Detail View
 	@Override
 	public void onInfoWindowClick(Marker arg0) {
 		// TODO Auto-generated method stub
 		Intent detailIntent = new Intent(context, DetailsActivity.class);
 		mainActivity.startAct(detailIntent, arg0.getTitle().toString());
 	}
-	
+
+	// onMapLongClick opens the Form View and passes click location in the Intent
 	@Override
 	public void onMapLongClick(LatLng arg0) {
 		// TODO Auto-generated method stub
@@ -113,38 +117,26 @@ public class MainFragment extends MapFragment implements OnInfoWindowClickListen
 		mainActivity.startAct(formIntent, "formMap");
 	}
 
-/*	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		View mainView = inflater.inflate(R.layout.activity_main, container);
-		return mainView;
-	}*/
-	
+	// addPin method adds pin data to local ArrayList
 	public void addPin(String latit, String longit, String pinTitle, String pinInfo) {
 		if (mainMap != null) {
-/*			mainMap.addMarker(new MarkerOptions().position
-					(new LatLng(Double.parseDouble(latit),Double.parseDouble(longit)))
-					.title(pinTitle));
-			additionalInfo = pinInfo;
 			
-			mainMap.setInfoWindowAdapter(new MarkerAdapter());*/
-			
-	    	MarkerData newMarker = new MarkerData(pinTitle, pinInfo, 
-	    			Double.parseDouble(latit), Double.parseDouble(longit));
-	    	markerData.add(newMarker);
+			MarkerData newMarker = new MarkerData(pinTitle, pinInfo, 
+					Double.parseDouble(latit), Double.parseDouble(longit));
+			markerData.add(newMarker);
 		}
 	}
-	
+
+	// updateMap is passed coordinates and aligns map with current location
 	public void updateMap(double latitude, double longitude) {
 		mainMap.animateCamera(CameraUpdateFactory.newLatLngZoom
-		(new LatLng(latitude, longitude), 14));
+				(new LatLng(latitude, longitude), 14));
 	}
-	
+
+	// MarkerAdapter creates custom info window for each marker
 	private class MarkerAdapter implements InfoWindowAdapter {
-		
+
 		TextView markerTextView;
-		
 
 		public MarkerAdapter() {
 			markerTextView = new TextView(getActivity());
@@ -161,17 +153,17 @@ public class MainFragment extends MapFragment implements OnInfoWindowClickListen
 						+ String.valueOf(markerData.get(t).longitude)));
 
 				DecimalFormat formatter = new DecimalFormat("###.####");
-				
+
 				Log.i(tag, String.valueOf(formatter.format(marker.getPosition().latitude) + "-" 
 						+ String.valueOf(formatter.format(markerData.get(t).latitude))));
 				Log.i(tag, String.valueOf(formatter.format(marker.getPosition().longitude) + "-" 
 						+ String.valueOf(formatter.format(markerData.get(t).longitude))));
-				
+
 				String markLat = String.valueOf(formatter.format(marker.getPosition().latitude));
 				String markLong = String.valueOf(formatter.format(marker.getPosition().longitude));
 				String savedLat = String.valueOf(formatter.format(markerData.get(t).latitude));
 				String savedLong = String.valueOf(formatter.format(markerData.get(t).longitude));
-				
+
 				if (markLat.matches(savedLat) && markLong.matches(savedLong)) {
 					markerTextView.setText(markerData.get(t).title + "\r\n" + markerData.get(t).info.toString());
 				}

@@ -1,3 +1,10 @@
+/* Name: Devin "Lauren" Elder
+ * Date: 09/25/2014
+ * Term: 1409
+ * Project Name: Photo Location App
+ * Assignment: MDF3 Week 4
+ */
+
 package com.laurenelder.photolocationapp;
 
 import java.io.File;
@@ -15,15 +22,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailsFragment extends Fragment {
-	
+
 	String tag = "DetailsFragment";
 	ImageView imageView;
 	TextView titleView;
 	TextView infoView;
 	TextView latView;
 	TextView longView;
-	
+
 	Context context;
+
 	private detailsInterface detailActivity;
 
 	// Set up interface
@@ -51,27 +59,29 @@ public class DetailsFragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View detailsView = inflater.inflate(R.layout.activity_details, container);
-		
+
+		// Instantiate Variables
 		imageView = (ImageView)detailsView.findViewById(R.id.detailImage);
 		titleView = (TextView)detailsView.findViewById(R.id.detailTitle);
 		infoView = (TextView)detailsView.findViewById(R.id.detailInfo);
 		latView = (TextView)detailsView.findViewById(R.id.detailLatitude);
 		longView = (TextView)detailsView.findViewById(R.id.detailLongitude);
-		
+
 		return detailsView;
 	}
 
+	// updateDetails method updates the UI with marker data
 	public void updateDetails(String title, String info, 
 			String image, String latit, String longit) {
 		File img = new  File(image);
 		if(img.exists()){
 
-		    Bitmap imgBitmap = BitmapFactory.decodeFile(img.getAbsolutePath());
-		    imageView.setImageBitmap(imgBitmap);
+			Bitmap imgBitmap = BitmapFactory.decodeFile(img.getAbsolutePath());
+			imageView.setImageBitmap(imgBitmap);
 		}
-	    titleView.setText(title);
-	    infoView.setText(info);
-	    latView.setText("Latitude: " + latit);
-	    longView.setText("Longitude: " + longit);
+		titleView.setText(title);
+		infoView.setText(info);
+		latView.setText("Latitude: " + latit);
+		longView.setText("Longitude: " + longit);
 	}
 }
