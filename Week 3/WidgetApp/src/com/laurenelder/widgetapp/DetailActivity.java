@@ -104,8 +104,14 @@ public class DetailActivity extends Activity implements DetailFragment.detailInt
 						}
 						Toast.makeText(context, "Entry Deleted", Toast.LENGTH_SHORT).show();
 
-						setResult(RESULT_OK, returnedIntent);
-						finish();
+						if (intent.getExtras().getString("source").toString().matches("widget")) {
+							Intent mainIntent = new Intent(context, MainActivity.class);
+							startActivity(mainIntent);
+							finish();
+						} else {
+							setResult(RESULT_OK, returnedIntent);
+							finish();
+						}
 					}
 
 				}

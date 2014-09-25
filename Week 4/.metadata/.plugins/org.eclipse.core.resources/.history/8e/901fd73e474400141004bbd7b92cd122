@@ -1,0 +1,194 @@
+package com.laurenelder.photolocationapp;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+
+public class MainActivity extends Activity implements LocationListener {
+	
+	Context context;
+	String tag = "MainActivity";
+	FileManager fileManager;
+	LocationManager locMgr;
+	Location loc;
+	FragmentManager fragMgr;
+	Fragment mapFrag;
+	List<Data> savedData = new ArrayList<Data>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_main);
+        
+        context = this;
+        
+		fragMgr = getFragmentManager();
+		mapFrag = (MainFragment)fragMgr.findFragmentById(R.id.mainFrag);
+		if(mapFrag == null) {
+			mapFrag = new MainFragment();
+		}
+		
+        locMgr = (LocationManager)getSystemService(LOCATION_SERVICE);
+//        locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, this);
+        locMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
+        loc = locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if(loc != null) {
+ //       	((MainFragment)mapFrag).updateMap(loc.getLatitude(), loc.getLongitude());
+        }
+        
+		fileManager = FileManager.getInstance();
+		File checkForFile = getBaseContext().getFileStreamPath(getResources()
+				.getString(R.string.data_file_name));
+		if (checkForFile.exists()) {
+        	String fileContent = fileManager.readFromFile(context, getResources()
+    				.getString(R.string.data_file_name));
+        	if (fileContent != null) {
+        		parseData(fileContent.toString());
+        		Log.i(tag, fileContent.toString());
+        	}
+		}
+        
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        
+        menu.findItem(R.id.action_item).setIcon(R.drawable.ic_action_new);
+        
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_item) {
+        	Intent formIntent = new Intent(context, FormActivity.class);
+        	startActivity(formIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    public void setData (String thisTitle, String thisInfo, String thisImage, 
+    		String thisLatitude, String thisLongitude) {
+    	
+    	Data newSavedObj = new Data(thisTitle, thisInfo, thisImage, 
+    			thisLatitude, thisLongitude);
+    	savedData.add(newSavedObj);
+    	
+//    	((MainFragment)mapFrag).addPin(thisLatitude, thisLongitude, thisTitle);
+    }
+    
+    public int sendNum() {
+    	return savedData.size();
+    }
+    
+    public ArrayList<String> sendData(int dataObjNum) {
+    	ArrayList<String> pinData = new ArrayList<String>();
+    	pinData.add(savedData.get(dataObjNum).title.toString());
+    	pinData.add(savedData.get(dataObjNum).latitude.toString());
+    	pinData.add(savedData.get(dataObjNum).longitude.toString());
+    	return pinData;
+    }
+    
+    public void parseData (String rawData) {
+    	
+		JSONObject mainObject = null;
+		JSONArray subObject = null;
+		
+		try {
+			mainObject = new JSONObject(rawData);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if (mainObject != null) {
+				subObject = mainObject.getJSONArray("data");
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for (int i = 0; i < subObject.length(); i++) {
+			
+			JSONObject dataObj = null;
+			try {
+				if (subObject != null) {
+					dataObj = subObject.getJSONObject(i);
+					
+					String title = dataObj.getString("Title");
+					String info = dataObj.getString("Information");
+					String image = dataObj.getString("Image");
+					String latitude = dataObj.getString("Latitude");
+					String longitude = dataObj.getString("Longitude");
+					
+					Log.i(tag, title.toString());
+					Log.i(tag, info.toString());
+					Log.i(tag, latitude.toString());
+					Log.i(tag, longitude.toString());
+					Log.i(tag, image.toString());
+					
+					setData(title, info, image, latitude, longitude);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    }
+
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		((MainFragment)mapFrag).updateMap(location.getLatitude(), location.getLongitude());
+	}
+
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+}

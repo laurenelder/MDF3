@@ -1,0 +1,13 @@
+package com.laurenelder.photolocationapp;
+
+import java.io.BufferedReader;
+
+public class Data {
+	
+	//Get Data
+	StringBuffer jsonBuffer = new StringBuffer();
+	BufferedReader reader = null;
+	
+	reader = new BufferedReader(new InputStreamReader(getAssets().open(
+			R.string.data_file_name)));
+}

@@ -1,5 +1,0 @@
-package com.laurenelder.widgetapp;
-
-public class DetailActivity extends Activity {
-
-}

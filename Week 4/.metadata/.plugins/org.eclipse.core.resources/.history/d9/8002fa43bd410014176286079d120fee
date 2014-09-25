@@ -1,0 +1,95 @@
+package com.laurenelder.photolocationapp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+
+public class MainActivity extends Activity {
+	
+	List<Data> savedData = new ArrayList<Data>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    public void setData (String thisTitle, String thisInfo, String thisLatitude, 
+    		String thisLongitude, String thisImage) {
+    	
+    	Data newSavedObj = new Data(thisTitle, thisInfo, thisLatitude, 
+    			thisLongitude, thisImage);
+    	savedData.add(newSavedObj);
+    }
+    
+    public void parseData (String rawData) {
+    	
+		JSONObject mainObject = null;
+		JSONArray subObject = null;
+		
+		try {
+			mainObject = new JSONObject(rawData);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			if (mainObject != null) {
+				subObject = mainObject.getJSONArray("data");
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for (int i = 0; i < subObject.length(); i++) {
+			
+			JSONObject dataObj = null;
+			try {
+				if (subObject != null) {
+					dataObj = subObject.getJSONObject(i);
+					
+					String title = dataObj.getString("");
+					String info = dataObj.getString("");
+					String latitude = dataObj.getString("");
+					String longitude = dataObj.getString("");
+					String image = dataObj.getString("");
+					
+					setData(title, info, latitude, longitude, image);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    }
+}

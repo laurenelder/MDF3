@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Photo Location App</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_item">Item</string>
+    <string name="add_image">Add Image Thumbnail Button</string>
+    <string name="form_title">Image Title:</string>
+    <string name="form_description">Image Description:</string>
+    <string name="data_file_name">storedData.txt</string>
+
+</resources>

@@ -1,0 +1,45 @@
+package com.laurenelder.photolocationapp;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.laurenelder.photolocationapp.FormFragment.formInterface;
+
+public class FormFragment extends Fragment {
+
+	Context context;
+	private formInterface formActivity;
+
+	// Set up interface
+	public interface formInterface {
+
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+
+		context = getActivity();
+
+		if (activity instanceof formInterface) {
+			formActivity = (formInterface) activity;
+		} else {
+			throw new ClassCastException((activity.toString()) + 
+					"Did not impliment formInterface");
+		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+	
+}

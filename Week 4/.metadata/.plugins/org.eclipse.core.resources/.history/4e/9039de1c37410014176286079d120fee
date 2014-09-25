@@ -1,0 +1,17 @@
+package com.laurenelder.photolocationapp;
+
+import java.io.BufferedReader;
+
+public class Data {
+	
+	public String title;
+	public String info;
+	public String latitude;
+	public String longitude;
+	public String image;
+	
+	public Data(String thisTitle, String thisInfo, String thisLatitude, 
+			String thisLongitude, String thisImage) {
+		
+	}
+}
